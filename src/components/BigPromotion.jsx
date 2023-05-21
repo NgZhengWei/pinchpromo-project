@@ -1,9 +1,10 @@
-import { Button, Flex, Heading, Image, Text } from '@chakra-ui/react';
+import { Button, Flex, Heading, Image, Link, Text } from '@chakra-ui/react';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { storage, db } from '../firebase';
 import { useEffect, useState } from 'react';
 import { updateDoc, doc, arrayUnion } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const BigPromotion = (props) => {
   const {
@@ -30,6 +31,7 @@ const BigPromotion = (props) => {
   const [promotionIsClaimed, setPromotionIsClaimed] = useState(false);
   const [numberOfCouponsClaimedState, setNumberOfCouponsClaimedState] =
     useState(numberOfCouponsClaimed);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // getting download url of the logo and poster images from storage
@@ -39,15 +41,18 @@ const BigPromotion = (props) => {
     // getDownloadURL(posterStorageRef).then((url) => {
     //   setPosterURL(url);
     // });
+
     // checking if user has already claimed this promotion
-    if (userPromotions.includes(id)) {
-      setPromotionIsClaimed(true);
+    if (userPromotions) {
+      if (userPromotions.includes(id)) {
+        setPromotionIsClaimed(true);
+      }
     }
   }, []);
 
   const startDate = new Date(releaseTime);
   const dateString =
-    String(startDate.getDay()) +
+    String(startDate.getDate()) +
     ' ' +
     startDate.toLocaleString('default', { month: 'long' }) +
     ' ' +
@@ -56,7 +61,7 @@ const BigPromotion = (props) => {
   const remainingCoupons = numberOfCoupons - numberOfCouponsClaimedState;
   let remainingCouponsString;
   if (remainingCoupons === 0) {
-    remainingCouponsString = 'Coupons all claimed';
+    remainingCouponsString = '';
   } else {
     remainingCouponsString = String(remainingCoupons) + ' remaining';
   }
@@ -74,6 +79,15 @@ const BigPromotion = (props) => {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  function seeMoreClickHandler(e) {
+    navigate('/bigpromotioninfo', {
+      state: {
+        promotionData: props.promotion,
+        promotionIsClaimed: promotionIsClaimed,
+      },
+    });
   }
 
   return (
@@ -104,18 +118,38 @@ const BigPromotion = (props) => {
             {remainingCouponsString}
           </Text>
         </Flex>
-        <Text fontSize={{ base: '13px', sm: '16px' }} mt='5px' mb='10px'>
+        <Text fontSize={{ base: '13px', sm: '16px' }} mt='5px' mb='3px'>
           {description}
         </Text>
+        <Link
+          onClick={seeMoreClickHandler}
+          fontSize={{ base: '13px', sm: '16px' }}
+          color='blue.400'
+          mb='3px'
+        >
+          See more...
+        </Link>
         <Button
           colorScheme='red'
           size='xs'
           w='min-content'
-          p='12px'
+          pt='3px'
           onClick={claimClickHandler}
           isDisabled={remainingCoupons <= 0 || promotionIsClaimed}
+          _disabled={{
+            backgroundColor: 'gray.400',
+            opacity: '0.4',
+            cursor: 'not-allowed',
+          }}
+          _hover={{
+            opacity: '0.7',
+          }}
         >
-          {promotionIsClaimed ? 'Claimed' : 'Claim'}
+          {promotionIsClaimed
+            ? 'Claimed'
+            : remainingCoupons <= 0
+            ? 'Fully Claimed'
+            : 'Claim'}
         </Button>
       </Flex>
     </Flex>

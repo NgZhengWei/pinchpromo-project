@@ -8,30 +8,54 @@ import {
 import { storage, db } from '../firebase';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Heading, Image, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Image,
+  Text,
+} from '@chakra-ui/react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 
 const PromotionInfo = (props) => {
   const [promotion, setPromotion] = useState({});
+  const [promotionUsed, setPromotionUsed] = useState(false);
   const [posterURL, setPosterURL] = useState('');
+  const [couponInUse, setCouponInUse] = useState(false);
+  const [timeLeft, setTimeLeft] = useState("Time's Up");
+  const [couponTimeUp, setCouponTimeUp] = useState(false);
   const { currentUser } = useAuth();
   const location = useLocation();
-  console.dir(location);
 
-  const promotionId = location.state.promotionId;
+  const { promotionId } = location.state;
 
   useEffect(() => {
     async function getPromotion() {
-      const promotionPromise = await getDoc(
-        doc(db, 'bigPromotions', promotionId)
-      );
-      setPromotion(promotionPromise.data());
+      try {
+        // retrive promotion data using promotionId obtained from navigation from UserPromotion Component
+        // set promotion data to promotion state
+        const promotionPromise = await getDoc(
+          doc(db, 'bigPromotions', promotionId)
+        );
+        setPromotion(promotionPromise.data());
+
+        // retrive user data from FireStore
+        // check if promotionId is in user's active promotions and set promotionUsed state
+        const userPromise = await getDoc(doc(db, 'users', currentUser.uid));
+        const userData = userPromise.data();
+        setPromotionUsed(!userData.promotions.includes(promotionId));
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     getPromotion();
   }, []);
 
+  // assignment of variables has to come after useEffect as we to wait for data from FireStore before setting variables
   const {
     id,
     store,
@@ -45,12 +69,13 @@ const PromotionInfo = (props) => {
     termsAndCondition,
     numberOfCoupons,
     numberOfCouponsClaimed,
-    promotions: userPromotions,
   } = promotion;
 
   let startDateString;
   let endDateString;
-  // getting download url of the logo and poster images from storage
+  // check if promotion state is set. If it is we
+  // get download url of the logo and poster images from storage
+  // and set date string of start and end date
   if (Object.keys(promotion).length !== 0) {
     const posterStorageRef = ref(storage, pathToPoster);
     getDownloadURL(posterStorageRef).then((url) => {
@@ -59,7 +84,7 @@ const PromotionInfo = (props) => {
 
     const startDate = new Date(releaseTime);
     startDateString =
-      String(startDate.getDay()) +
+      String(startDate.getDate()) +
       ' ' +
       startDate.toLocaleString('default', { month: 'long' }) +
       ' ' +
@@ -67,7 +92,7 @@ const PromotionInfo = (props) => {
 
     const endDate = new Date(endTime);
     endDateString =
-      String(endDate.getDay()) +
+      String(endDate.getDate()) +
       ' ' +
       endDate.toLocaleString('default', { month: 'long' }) +
       ' ' +
@@ -77,7 +102,7 @@ const PromotionInfo = (props) => {
   async function useCouponHandler(e) {
     if (
       window.confirm(
-        'Coupon will only be vaild for 5 minutes upon using, please make sure you are at the store before presing "ok"'
+        'Coupon will only be vaild for 5 minutes upon using, please make sure you are at the store before presing "OK"'
       ) === true
     ) {
       try {
@@ -85,10 +110,40 @@ const PromotionInfo = (props) => {
           promotions: arrayRemove(promotionId),
           usedPromotions: arrayUnion(promotionId),
         });
+        startUsageTimer();
       } catch (e) {
         console.error(e);
       }
     }
+  }
+
+  function startUsageTimer() {
+    setCouponInUse(true);
+    // change initial timing to when timing duration is changed
+    setTimeLeft('5:00');
+    const currentTime = new Date();
+    // change timing added to change timer duration
+    const endTime = new Date(currentTime.getTime() + 1 * 60000);
+    console.log('end time: ' + endTime);
+
+    const interval = window.setInterval(function () {
+      const now = new Date();
+      const diff = endTime - now;
+
+      if (diff <= 0) {
+        setTimeLeft("Time's Up");
+        clearInterval(interval);
+        setCouponTimeUp(true);
+      } else {
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        let secondsString = String(seconds);
+        if (secondsString.length === 1) {
+          secondsString = '0' + secondsString;
+        }
+        setTimeLeft(minutes + ':' + secondsString);
+      }
+    }, 1000);
   }
 
   return (
@@ -98,8 +153,15 @@ const PromotionInfo = (props) => {
         objectFit='cover'
         src={posterURL}
         mx='auto'
-        mb='15px'
+        mb='5px'
       />
+      <Heading
+        textAlign='center'
+        fontSize={{ base: '24px', sm: '28px', md: '32px' }}
+        mb='10px'
+      >
+        {store}
+      </Heading>
       <Heading
         textAlign='center'
         fontSize={{ base: '28px', sm: '32px', md: '36px' }}
@@ -139,14 +201,31 @@ const PromotionInfo = (props) => {
         <Text fontSize={{ base: '13px', sm: '16px' }}>{termsAndCondition}</Text>
       </Box>
 
-      <Button
-        colorScheme='red'
-        position='relative'
-        bottom='0px'
-        onClick={useCouponHandler}
-      >
-        Use
-      </Button>
+      {!couponInUse && (
+        <Button
+          colorScheme={promotionUsed ? 'blackAlpha' : 'red'}
+          variant={promotionUsed ? 'outline' : 'solid'}
+          isDisabled={promotionUsed}
+          position='relative'
+          bottom='0px'
+          onClick={useCouponHandler}
+        >
+          {promotionUsed ? 'Used' : 'Use'}
+        </Button>
+      )}
+
+      {couponInUse && (
+        <Card
+          backgroundColor={couponTimeUp ? 'red.500' : 'green.400'}
+          py='10px'
+        >
+          <Text textAlign='center'>{timeLeft}</Text>
+          {couponTimeUp && (
+            <Text textAlign='center'>Thanks for using PinchPromo :)</Text>
+          )}
+          {!couponTimeUp && <Text textAlign='center'>{promocode}</Text>}
+        </Card>
+      )}
     </Flex>
   );
 };

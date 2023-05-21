@@ -28,6 +28,22 @@ const BigPromotion = (props) => {
     // });
   }, []);
 
+  // input: date object as input
+  // return: day difference rounded up to nearest int (date1 - date2)
+  // if return is -ve means day has passed
+  function getDayDifference(date1, date2) {
+    const diffTime = date1 - date2;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }
+
+  // output: true if coupon is expiring within 3 days, false otherwise
+  function isExpiring() {
+    const dayDiff = getDayDifference(new Date(endTime), new Date());
+    // check for -0 is to account for expiry date bring the day before, in which case it should return false
+    return dayDiff !== -0 && dayDiff >= 0 && dayDiff <= 3;
+  }
+
   const {
     id,
     store,
@@ -52,26 +68,18 @@ const BigPromotion = (props) => {
     });
   }
 
-  const startDate = new Date(releaseTime);
+  const endDate = new Date(endTime);
   const dateString =
-    String(startDate.getDay()) +
+    String(endDate.getDate()) +
     ' ' +
-    startDate.toLocaleString('default', { month: 'long' }) +
+    endDate.toLocaleString('default', { month: 'long' }) +
     ' ' +
-    String(startDate.getFullYear());
+    String(endDate.getFullYear());
 
   async function useClickHandler(e) {
-    navigate('/promotioninfo', { state: { promotionId: props.promotionId } });
-    // try {
-    //   await updateDoc(doc(db, 'users', currentUser.uid), {
-    //     promotions: arrayUnion(id),
-    //   });
-    //   await updateDoc(doc(db, 'bigPromotions', id), {
-    //     numberOfCouponsClaimed: numberOfCouponsClaimed + 1,
-    //   });
-    // } catch (e) {
-    //   console.error(e);
-    // }
+    navigate('/promotioninfo', {
+      state: { promotionId: props.promotionId, used: props.used },
+    });
   }
 
   return (
@@ -87,32 +95,27 @@ const BigPromotion = (props) => {
       <Flex direction='column' w='100%'>
         <Text
           fontSize={{ base: '11px', sm: '12px', md: '16px' }}
-          color='gray.600'
+          color={isExpiring() ? 'red' : 'gray.600'}
         >
-          {dateString}
+          {'Expires ' + dateString}
         </Text>
         <Flex justifyContent='space-between' alignItems='center'>
           <Heading as='h4' fontSize={{ base: '20px', sm: '24px', md: '28px' }}>
             {store}
           </Heading>
-          <Text
-            fontSize={{ base: '11px', sm: '12px', md: '16px' }}
-            color='gray.600'
-          >
-            coupons remaining
-          </Text>
         </Flex>
         <Text fontSize={{ base: '13px', sm: '16px' }} mt='5px' mb='10px'>
           {description}
         </Text>
         <Button
-          colorScheme='red'
+          colorScheme={props.used ? 'blackAlpha' : 'red'}
+          variant={props.used ? 'outline' : 'solid'}
           size='xs'
           w='min-content'
-          p='12px'
+          pt='3px'
           onClick={useClickHandler}
         >
-          Use
+          {props.used ? 'See more' : 'Use'}
         </Button>
       </Flex>
     </Flex>

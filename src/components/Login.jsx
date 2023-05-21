@@ -84,7 +84,13 @@ const Login = () => {
                 isRequired
               />
             </FormControl>
-            <Button disabled={loading} type='submit' mb='15px' w='100%'>
+            <Button
+              disabled={loading}
+              type='submit'
+              mb='15px'
+              w='100%'
+              colorScheme='red'
+            >
               Login
             </Button>
             <Text>

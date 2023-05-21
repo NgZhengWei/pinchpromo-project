@@ -31,7 +31,7 @@ const ForgotPassword = () => {
       setError('');
       setLoading(true);
       await resetPassword(emailRef.current.value);
-      setMessage('Check your inbox for further instructions.');
+      setMessage('Check your inbox/spam for further instructions.');
     } catch (e) {
       if (e.code === 'auth/user-not-found') {
         setError('No registered user');
@@ -91,17 +91,24 @@ const ForgotPassword = () => {
               <Input type='email' name='email' ref={emailRef} required />
             </FormControl>
 
-            <Button disabled={loading} type='submit' mb='15px' w='100%'>
+            <Button
+              disabled={loading}
+              type='submit'
+              mb='15px'
+              w='100%'
+              colorScheme='red'
+            >
               Reset Password
             </Button>
-            <Text>
-              <Link href='/login' color='blue.400'>
-                Login?
-              </Link>
-            </Text>
           </Form>
         </CardBody>
       </Card>
+      <Text mb='10px'>
+        Already have an account?{' '}
+        <Link href='/login' color='blue.400'>
+          Login
+        </Link>
+      </Text>
       <Text>
         Don't have an account?{' '}
         <Link href='/signup' color='blue.400'>

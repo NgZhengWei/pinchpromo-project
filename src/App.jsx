@@ -16,6 +16,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ForgotPassword from './components/ForgotPassword';
 import NewBigPromotions from './components/NewBigPromotions';
 import PromotionInfo from './components/PromotionInfo';
+import BigPromotionInfo from './components/BigPromotionInfo';
 
 // router and routes
 const router = createBrowserRouter(
@@ -58,6 +59,14 @@ const router = createBrowserRouter(
         element={
           <PrivateRoute>
             <NewBigPromotions />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='bigpromotioninfo'
+        element={
+          <PrivateRoute>
+            <BigPromotionInfo />
           </PrivateRoute>
         }
       />

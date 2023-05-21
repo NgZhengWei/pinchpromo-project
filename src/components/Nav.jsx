@@ -18,38 +18,10 @@ const Nav = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
-  async function handleLogout(e) {
-    try {
-      await logout();
-      toast({
-        title: 'Logged Out',
-        description: 'Successfully logged out',
-        isClosable: true,
-        duration: 3000,
-        status: 'success',
-        position: 'top',
-        icon: <UnlockIcon />,
-      });
-      navigate('/login');
-    } catch {
-      toast({
-        title: 'Logged Out',
-        description: 'Failed to logged out',
-        isClosable: true,
-        duration: 3000,
-        status: 'error',
-        position: 'bottom',
-        icon: <UnlockIcon />,
-      });
-    }
-  }
-
   const loggedInNav = (
     <>
       <Heading as='h3' fontSize={{ base: '18px', sm: '25px', md: '32px' }}>
         <NavLink to='/'>Promos</NavLink>
-        {/* TODO: remove later */}
-        {/* {currentUser && <Text>{currentUser.email}</Text>} */}
       </Heading>
 
       <Spacer />
@@ -63,11 +35,6 @@ const Nav = () => {
         <ListItem>
           <Heading as='h3' fontSize={{ base: '13px', sm: '15px', md: '24px' }}>
             <NavLink to='/profile'>Profile</NavLink>
-          </Heading>
-        </ListItem>
-        <ListItem>
-          <Heading as='h3' fontSize={{ base: '13px', sm: '15px', md: '24px' }}>
-            <NavLink onClick={handleLogout}>Logout</NavLink>
           </Heading>
         </ListItem>
       </List>

@@ -10,22 +10,49 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Link,
-  Text,
+  useToast,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import { Form } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { UnlockIcon } from '@chakra-ui/icons';
 
 const Profile = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
-  const { currentUser, updateEmail, updatePassword } = useAuth();
+  const { currentUser, updateEmail, updatePassword, logout } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
+
+  async function handleLogout(e) {
+    try {
+      await logout();
+      toast({
+        title: 'Logged Out',
+        description: 'Successfully logged out',
+        isClosable: true,
+        duration: 3000,
+        status: 'success',
+        position: 'top',
+        icon: <UnlockIcon />,
+      });
+      navigate('/login');
+    } catch {
+      toast({
+        title: 'Logged Out',
+        description: 'Failed to logged out',
+        isClosable: true,
+        duration: 3000,
+        status: 'error',
+        position: 'bottom',
+        icon: <UnlockIcon />,
+      });
+    }
+  }
 
   function handleSumit(e) {
     e.preventDefault();
@@ -113,17 +140,20 @@ const Profile = () => {
                 placeholder='Leave blank to keep the same'
               />
             </FormControl>
-            <Button disabled={loading} type='submit' w='100%'>
+            <Button disabled={loading} type='submit' w='100%' colorScheme='red'>
               Update
             </Button>
           </Form>
         </CardBody>
       </Card>
-      <Text>
+      <Button onClick={handleLogout} variant='ghost' colorScheme='gray'>
+        Logout
+      </Button>
+      {/* <Text>
         <Link href='/' color='blue.400'>
           Cancel
         </Link>
-      </Text>
+      </Text> */}
     </Box>
   );
 };

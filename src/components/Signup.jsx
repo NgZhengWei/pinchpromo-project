@@ -126,7 +126,7 @@ const Signup = () => {
                 isRequired
               />
             </FormControl>
-            <Button disabled={loading} type='submit' w='100%'>
+            <Button disabled={loading} type='submit' w='100%' colorScheme='red'>
               Sign Up
             </Button>
           </Form>
