@@ -35,7 +35,13 @@ const Login = () => {
       await login(emailRef.current.value, passwordRef.current.value);
       navigate('/');
     } catch (e) {
-      setError(e);
+      if (e.code === 'auth/user-not-found') {
+        setError('User not found.');
+      } else if (e.code === 'auth/wrong-password') {
+        setError('Wrong password.');
+      } else {
+        setError(e.message);
+      }
     }
     setLoading(false);
   }

@@ -32,9 +32,15 @@ const UserPromotions = () => {
 
   return (
     <Container>
-      <Heading as='h2' mt='10px' textAlign='center' fontSize={headingFontSize}>
+      <Heading as='h2' mb='8px' textAlign='center' fontSize={headingFontSize}>
         Active Promotions
       </Heading>
+      {userActivePromotions.length <= 0 && (
+        <Text textAlign='center'>
+          No promotions yet. Keep an eye on the promos tab for when new
+          promotions are released!
+        </Text>
+      )}
       {userActivePromotions.map((promotionId) => (
         <UserPromotion
           key={promotionId}
@@ -42,9 +48,16 @@ const UserPromotions = () => {
           used={false}
         />
       ))}
-      <Heading as='h2' mt='60px' textAlign='center' fontSize={headingFontSize}>
-        Used Promotions
-      </Heading>
+      {userUsedPromotions.length > 0 && (
+        <Heading
+          as='h2'
+          mt='60px'
+          textAlign='center'
+          fontSize={headingFontSize}
+        >
+          Used Promotions
+        </Heading>
+      )}
       {userUsedPromotions.map((promotionId) => (
         <UserPromotion
           key={promotionId}

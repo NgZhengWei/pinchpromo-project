@@ -31,13 +31,15 @@ const Signup = () => {
   const navigate = useNavigate();
 
   async function makeNewUser(user) {
-    console.dir(user);
-    console.log(user.email);
-    console.log(user.uid);
+    // console.dir(user);
+    // console.log(user.email);
+    // console.log(user.uid);
 
     await setDoc(doc(db, 'users', user.uid), {
       name: nameRef.current.value,
       email: emailRef.current.value,
+      promotions: [],
+      usedPromotions: [],
     });
   }
 
@@ -53,7 +55,7 @@ const Signup = () => {
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value).then(
         (userCredentials) => {
-          console.dir(userCredentials);
+          // console.dir(userCredentials);
           makeNewUser(userCredentials.user);
         }
       );

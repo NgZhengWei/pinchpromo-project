@@ -48,7 +48,7 @@ const PromotionInfo = (props) => {
         const userData = userPromise.data();
         setPromotionUsed(!userData.promotions.includes(promotionId));
       } catch (e) {
-        console.error(e);
+        console.error(e.message);
       }
     }
 
@@ -112,7 +112,7 @@ const PromotionInfo = (props) => {
         });
         startUsageTimer();
       } catch (e) {
-        console.error(e);
+        console.error(e.message);
       }
     }
   }
