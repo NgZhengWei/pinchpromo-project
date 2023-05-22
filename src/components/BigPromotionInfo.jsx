@@ -8,9 +8,18 @@ import {
 import { storage, db } from '../firebase';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Heading, Image, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Image,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
+import { CheckIcon } from '@chakra-ui/icons';
 
 const PromotionInfo = (props) => {
   const location = useLocation();
@@ -39,6 +48,7 @@ const PromotionInfo = (props) => {
   const [numberOfCouponsClaimedState, setNumberOfCouponsClaimedState] =
     useState(numberOfCouponsClaimed);
   const { currentUser } = useAuth();
+  const toast = useToast();
 
   const remainingCoupons = numberOfCoupons - numberOfCouponsClaimedState;
   let remainingCouponsString;
@@ -97,6 +107,15 @@ const PromotionInfo = (props) => {
       });
       setNumberOfCouponsClaimedState(numberOfCouponsClaimed + 1);
       setPromotionIsClaimed(true);
+      toast({
+        title: 'Claimed',
+        description: 'Successfully claimed coupon',
+        isClosable: true,
+        duration: 3000,
+        status: 'success',
+        position: 'top',
+        icon: <CheckIcon />,
+      });
     } catch (e) {
       console.error(e);
     }

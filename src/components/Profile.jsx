@@ -123,7 +123,7 @@ const Profile = () => {
               />
             </FormControl>
             <FormControl mb='20px'>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>New Password</FormLabel>
               <Input
                 type='password'
                 name='password'
@@ -132,7 +132,7 @@ const Profile = () => {
               />
             </FormControl>
             <FormControl mb='20px'>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>New Confirmed Password</FormLabel>
               <Input
                 type='password'
                 name='confirm-password'

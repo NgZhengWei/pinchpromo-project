@@ -1,6 +1,7 @@
 import { ChatIcon, EmailIcon } from '@chakra-ui/icons';
 import { Box, HStack, Heading, Text } from '@chakra-ui/react';
-import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 const Footer = () => {
   return (
@@ -20,13 +21,13 @@ const Footer = () => {
         <HStack>
           <ChatIcon />
           <Text fontSize={{ base: '13px', sm: '15px', md: '16px' }}>
-            Telegram @alestierK
+            Telegram: @alestierK
           </Text>
         </HStack>
         <HStack>
           <EmailIcon />
           <Text fontSize={{ base: '13px', sm: '15px', md: '16px' }}>
-            ray.ng@pinchpromo.com
+            alestier@pinchpromo.com
           </Text>
         </HStack>
       </Box>

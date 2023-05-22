@@ -6,22 +6,27 @@ import {
   List,
   ListItem,
   Spacer,
-  useToast,
 } from '@chakra-ui/react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from '../img/logo.png';
-import { UnlockIcon } from '@chakra-ui/icons';
 
 const Nav = () => {
-  const { currentUser, logout } = useAuth();
-  const toast = useToast();
-  const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   const loggedInNav = (
-    <>
+    <Flex mr='10px' alignItems='center' justifyContent='space-between' w='100%'>
       <Heading as='h3' fontSize={{ base: '18px', sm: '25px', md: '32px' }}>
-        <NavLink to='/'>Promos</NavLink>
+        <Link
+          to='/'
+          as={NavLink}
+          _activeLink={{
+            color: 'white',
+            textDecoration: 'none',
+          }}
+        >
+          Promos
+        </Link>
       </Heading>
 
       <Spacer />
@@ -29,16 +34,34 @@ const Nav = () => {
       <List display='flex' gap='15px'>
         <ListItem>
           <Heading as='h3' fontSize={{ base: '13px', sm: '15px', md: '24px' }}>
-            <NavLink to='/mypromotions'>MyPromos</NavLink>
+            <Link
+              to='/mypromotions'
+              as={NavLink}
+              _activeLink={{
+                color: 'white',
+                textDecoration: 'none',
+              }}
+            >
+              Inventory
+            </Link>
           </Heading>
         </ListItem>
         <ListItem>
           <Heading as='h3' fontSize={{ base: '13px', sm: '15px', md: '24px' }}>
-            <NavLink to='/profile'>Profile</NavLink>
+            <Link
+              to='/profile'
+              as={NavLink}
+              _activeLink={{
+                color: 'white',
+                textDecoration: 'none',
+              }}
+            >
+              Profile
+            </Link>
           </Heading>
         </ListItem>
       </List>
-    </>
+    </Flex>
   );
 
   return (
@@ -48,7 +71,6 @@ const Nav = () => {
       bg='brandYellow.100'
       py='20px'
       px={{ base: '10px', sm: '15px', md: '40px' }}
-      gap='15px'
     >
       <Image src={Logo} boxSize={{ base: '40px', sm: '60px', md: '80px' }} />
 

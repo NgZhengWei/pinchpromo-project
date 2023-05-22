@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase';
-import { getDocs, collection, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { Container, Heading, Text } from '@chakra-ui/react';
 import UserPromotion from './UserPromotion';
 
 const UserPromotions = () => {
   const { currentUser } = useAuth();
-  // const [bigPromotions, setBigPromotions] = useState([]);
   const [userActivePromotions, setUserActivePromotions] = useState([]);
   const [userUsedPromotions, setUserUsedPromotions] = useState([]);
 
@@ -29,6 +28,7 @@ const UserPromotions = () => {
   }, []);
 
   const headingFontSize = { base: '28px', sm: '32px', md: '36px' };
+  const bodyFontSize = { base: '13px', sm: '16px' };
 
   return (
     <Container>
@@ -36,7 +36,7 @@ const UserPromotions = () => {
         Active Promotions
       </Heading>
       {userActivePromotions.length <= 0 && (
-        <Text textAlign='center'>
+        <Text textAlign='center' fontSize={bodyFontSize}>
           No promotions yet. Keep an eye on the promos tab for when new
           promotions are released!
         </Text>

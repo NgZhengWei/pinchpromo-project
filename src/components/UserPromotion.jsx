@@ -82,6 +82,9 @@ const BigPromotion = (props) => {
     });
   }
 
+  const smallFontSize = { base: '11px', sm: '12px', md: '16px' };
+  const bodyFontSize = { base: '13px', sm: '16px' };
+
   return (
     <Flex p='20px' borderBottom='1px solid' borderColor='gray.400'>
       <Image
@@ -90,12 +93,13 @@ const BigPromotion = (props) => {
         alt={store + ' logo'}
         objectFit='cover'
         mr='15px'
+        my='auto'
       />
 
       <Flex direction='column' w='100%'>
         <Text
-          fontSize={{ base: '11px', sm: '12px', md: '16px' }}
-          color={isExpiring() ? 'red' : 'gray.600'}
+          fontSize={smallFontSize}
+          color={isExpiring() && !props.used ? 'red' : 'gray.600'}
         >
           {'Expires ' + dateString}
         </Text>
@@ -104,7 +108,7 @@ const BigPromotion = (props) => {
             {store}
           </Heading>
         </Flex>
-        <Text fontSize={{ base: '13px', sm: '16px' }} mt='5px' mb='10px'>
+        <Text fontSize={bodyFontSize} mt='5px' mb='10px'>
           {description}
         </Text>
         <Button
@@ -112,8 +116,9 @@ const BigPromotion = (props) => {
           variant={props.used ? 'outline' : 'solid'}
           size='xs'
           w='min-content'
-          pt='3px'
+          p='15px'
           onClick={useClickHandler}
+          fontSize={bodyFontSize}
         >
           {props.used ? 'See more' : 'Use'}
         </Button>

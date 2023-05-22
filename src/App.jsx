@@ -22,14 +22,7 @@ import BigPromotionInfo from './components/BigPromotionInfo';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<RootLayout />}>
-      <Route
-        index
-        element={
-          <PrivateRoute>
-            <Promotions />
-          </PrivateRoute>
-        }
-      />
+      <Route index element={<Promotions />} />
       <Route
         path='mypromotions'
         element={

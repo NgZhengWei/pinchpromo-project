@@ -21,6 +21,7 @@ const BigPromotion = (props) => {
     numberOfCoupons,
     numberOfCouponsClaimed,
     promotions: userPromotions,
+    usedPromotions,
   } = props.promotion;
 
   const { currentUser } = useAuth();
@@ -44,7 +45,7 @@ const BigPromotion = (props) => {
 
     // checking if user has already claimed this promotion
     if (userPromotions) {
-      if (userPromotions.includes(id)) {
+      if (userPromotions.includes(id) || usedPromotions.includes(id)) {
         setPromotionIsClaimed(true);
       }
     }
@@ -90,6 +91,9 @@ const BigPromotion = (props) => {
     });
   }
 
+  const smallFontSize = { base: '11px', sm: '12px', md: '16px' };
+  const bodyFontSize = { base: '13px', sm: '16px' };
+
   return (
     <Flex p='20px' borderBottom='1px solid' borderColor='gray.400'>
       <Image
@@ -98,43 +102,32 @@ const BigPromotion = (props) => {
         alt={store + ' logo'}
         objectFit='cover'
         mr='15px'
+        my='auto'
       />
 
       <Flex direction='column' w='100%'>
-        <Text
-          fontSize={{ base: '11px', sm: '12px', md: '16px' }}
-          color='gray.600'
-        >
+        <Text fontSize={smallFontSize} color='gray.600'>
           {dateString}
         </Text>
         <Flex justifyContent='space-between' alignItems='center'>
           <Heading as='h4' fontSize={{ base: '20px', sm: '24px', md: '28px' }}>
             {store}
           </Heading>
-          <Text
-            fontSize={{ base: '11px', sm: '12px', md: '16px' }}
-            color='gray.600'
-          >
+          <Text fontSize={smallFontSize} color='gray.600'>
             {remainingCouponsString}
           </Text>
         </Flex>
-        <Text fontSize={{ base: '13px', sm: '16px' }} mt='5px' mb='3px'>
+        <Text fontSize={bodyFontSize} mt='5px' mb='3px'>
           {description}
         </Text>
-        <Link
-          onClick={seeMoreClickHandler}
-          fontSize={{ base: '13px', sm: '16px' }}
-          color='blue.400'
-          mb='3px'
-        >
-          See more...
-        </Link>
+
         <Button
           colorScheme='red'
           size='xs'
           w='min-content'
-          pt='3px'
-          onClick={claimClickHandler}
+          p='15px'
+          onClick={seeMoreClickHandler}
+          fontSize={bodyFontSize}
           isDisabled={remainingCoupons <= 0 || promotionIsClaimed}
           _disabled={{
             backgroundColor: 'gray.400',

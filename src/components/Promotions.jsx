@@ -11,7 +11,11 @@ const Promotions = () => {
   const [bigPromotions, setBigPromotions] = useState([]);
 
   const bigPromotionsCollectionRef = collection(db, 'bigPromotions');
-  const userRef = doc(db, 'users', currentUser.uid);
+
+  let userRef;
+  if (currentUser) {
+    userRef = doc(db, 'users', currentUser.uid);
+  }
 
   // input: date object as input
   // return: day difference rounded up to nearest int (date1 - date2)
@@ -34,15 +38,28 @@ const Promotions = () => {
   useEffect(() => {
     const getBigPromotions = async () => {
       try {
-        const userData = await getDoc(userRef);
-        setUsername(userData.data().name);
-
+        let filteredData;
         const data = await getDocs(bigPromotionsCollectionRef);
-        const filteredData = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-          promotions: userData.data().promotions,
-        }));
+
+        if (currentUser) {
+          const userData = await getDoc(userRef);
+          setUsername(userData.data().name);
+
+          filteredData = data.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+            promotions: userData.data().promotions,
+            usedPromotions: userData.data().usedPromotions,
+          }));
+        } else {
+          filteredData = data.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+            promotions: [],
+            usedPromotions: [],
+          }));
+        }
+
         setBigPromotions(filteredData);
       } catch (e) {
         console.error(e);

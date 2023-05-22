@@ -102,7 +102,7 @@ const PromotionInfo = (props) => {
   async function useCouponHandler(e) {
     if (
       window.confirm(
-        'Coupon will only be vaild for 5 minutes upon using, please make sure you are at the store before presing "OK"'
+        'Coupon will only be vaild for 5 minutes upon using, please make sure you are at the store before presing "OK". Refreshing the page will make the coupon invalid.'
       ) === true
     ) {
       try {
@@ -123,7 +123,7 @@ const PromotionInfo = (props) => {
     setTimeLeft('5:00');
     const currentTime = new Date();
     // change timing added to change timer duration
-    const endTime = new Date(currentTime.getTime() + 1 * 60000);
+    const endTime = new Date(currentTime.getTime() + 5 * 60000);
     console.log('end time: ' + endTime);
 
     const interval = window.setInterval(function () {

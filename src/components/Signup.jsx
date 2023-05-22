@@ -63,6 +63,10 @@ const Signup = () => {
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
         setError('Email already in use.');
+      } else if (e.code === 'auth/weak-password') {
+        setError('Password should be at least 6 characters.');
+      } else if (e.code === 'auth/invalid-email') {
+        setError('Invalid email address.');
       } else {
         setError(e.message);
       }
