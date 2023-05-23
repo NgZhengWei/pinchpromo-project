@@ -14,7 +14,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
-import { Form } from 'react-router-dom';
+import { Form, NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
@@ -140,7 +140,7 @@ const Signup = () => {
       </Card>
       <Text>
         Already have an account?{' '}
-        <Link href='/login' color='blue.400'>
+        <Link to='/login' color='blue.400' as={NavLink}>
           Login
         </Link>
       </Text>
