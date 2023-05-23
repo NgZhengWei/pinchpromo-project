@@ -77,9 +77,32 @@ const Nav = () => {
       {currentUser ? (
         loggedInNav
       ) : (
-        <Heading fontSize={{ base: '24px', sm: '30px', md: '42px' }}>
-          <Link href='/signup'>PinchPromo</Link>
-        </Heading>
+        <Flex justifyContent='space-between' w='100%' pr='10px'>
+          <Heading fontSize={{ base: '24px', sm: '30px', md: '42px' }}>
+            <Link
+              to='/'
+              as={NavLink}
+              _activeLink={{
+                color: 'white',
+                textDecoration: 'none',
+              }}
+            >
+              PinchPromo
+            </Link>
+          </Heading>
+          <Heading fontSize={{ base: '24px', sm: '30px', md: '42px' }} as='h3'>
+            <Link
+              to='/signup'
+              as={NavLink}
+              _activeLink={{
+                color: 'white',
+                textDecoration: 'none',
+              }}
+            >
+              Sign Up
+            </Link>
+          </Heading>
+        </Flex>
       )}
     </Flex>
   );

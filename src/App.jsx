@@ -24,7 +24,7 @@ const router = createBrowserRouter(
     <Route path='/' element={<RootLayout />}>
       <Route index element={<Promotions />} />
       <Route
-        path='mypromotions'
+        path='/mypromotions'
         element={
           <PrivateRoute>
             <UserPromotions />
@@ -32,7 +32,7 @@ const router = createBrowserRouter(
         }
       />
       <Route
-        path='profile'
+        path='/profile'
         element={
           <PrivateRoute>
             <Profile />
@@ -40,7 +40,7 @@ const router = createBrowserRouter(
         }
       />
       <Route
-        path='promotioninfo'
+        path='/promotioninfo'
         element={
           <PrivateRoute>
             <PromotionInfo />
@@ -48,7 +48,7 @@ const router = createBrowserRouter(
         }
       />
       <Route
-        path='newbigpromotions'
+        path='/newbigpromotions'
         element={
           <PrivateRoute>
             <NewBigPromotions />
@@ -56,16 +56,16 @@ const router = createBrowserRouter(
         }
       />
       <Route
-        path='bigpromotioninfo'
+        path='/bigpromotioninfo'
         element={
           <PrivateRoute>
             <BigPromotionInfo />
           </PrivateRoute>
         }
       />
-      <Route path='login' element={<Login />} />
-      <Route path='signup' element={<Signup />} />
-      <Route path='forgotpassword' element={<ForgotPassword />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/signup' element={<Signup />} />
+      <Route path='/forgotpassword' element={<ForgotPassword />} />
     </Route>
   )
 );

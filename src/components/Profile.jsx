@@ -16,7 +16,7 @@ import React, { useRef, useState } from 'react';
 import { Form } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { UnlockIcon } from '@chakra-ui/icons';
+import { CheckIcon, UnlockIcon } from '@chakra-ui/icons';
 
 const Profile = () => {
   const emailRef = useRef();
@@ -72,8 +72,19 @@ const Profile = () => {
     Promise.all(promises)
       .then(() => {
         navigate('/');
+        toast({
+          title: 'Profile successfully updated.',
+          isClosable: true,
+          duration: 3000,
+          status: 'success',
+          position: 'top',
+          icon: <CheckIcon />,
+        });
       })
       .catch((e) => {
+        if (e.code === 'auth/requires-recent-login') {
+          setError('Please logout and login again to reset your password.');
+        }
         setError(e.message);
       })
       .finally(() => {
