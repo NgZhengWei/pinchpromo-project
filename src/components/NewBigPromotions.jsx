@@ -25,6 +25,7 @@ const NewBigPromotions = () => {
   const descriptionRef = useRef();
   const termsAndConditionsRef = useRef();
   const promocodeRef = useRef();
+  const initTimeRef = useRef();
   const releaseTimeRef = useRef();
   const endTimeRef = useRef();
   const logoRef = useRef();
@@ -79,10 +80,12 @@ const NewBigPromotions = () => {
           pathToLogo: logoPath,
           pathToPoster: posterPath,
           promocode: promocodeRef.current.value,
+          initTime: initTimeRef.current.value,
           releaseTime: releaseTimeRef.current.value,
           endTime: endTimeRef.current.value,
           numberOfCoupons: parseInt(numCouponsRef.current.value),
           numberOfCouponsClaimed: 0,
+          timestampClaim: [],
         }
       );
       setSuccess('Successfully added big promotion.');
@@ -183,6 +186,15 @@ const NewBigPromotions = () => {
                 type='text'
                 name='promocode'
                 ref={promocodeRef}
+                isRequired
+              />
+            </FormControl>
+            <FormControl mb='20px'>
+              <FormLabel>Init Time</FormLabel>
+              <Input
+                type='datetime-local'
+                name='initTime'
+                ref={initTimeRef}
                 isRequired
               />
             </FormControl>

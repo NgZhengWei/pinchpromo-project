@@ -76,11 +76,13 @@ const Promotions = () => {
         // console.log(
         //   promotion.store + ': ' + shouldDisplay(promotion.releaseTime)
         // );
-        if (shouldDisplay(promotion.releaseTime) === true) {
-          return <BigPromotion promotion={promotion} key={promotion.id} />;
-        } else {
-          return '';
-        }
+        // if (shouldDisplay(promotion.releaseTime) === true) {
+        //   return <BigPromotion promotion={promotion} key={promotion.id} />;
+        // } else {
+        //   return '';
+        // }
+
+        return <BigPromotion promotion={promotion} key={promotion.id} />;
       })}
     </Container>
   );

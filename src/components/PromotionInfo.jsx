@@ -209,6 +209,7 @@ const PromotionInfo = (props) => {
           position='relative'
           bottom='0px'
           onClick={useCouponHandler}
+          mb='15px'
         >
           {promotionUsed ? 'Used' : 'Use'}
         </Button>
