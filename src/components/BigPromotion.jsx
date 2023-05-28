@@ -1,12 +1,22 @@
-import { Button, Flex, Heading, Image, Link, Text } from '@chakra-ui/react';
+import { Button, Flex, Heading, Image, Text, useToast } from '@chakra-ui/react';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { storage, db } from '../firebase';
 import { useEffect, useState } from 'react';
 import { updateDoc, doc, arrayUnion } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { CheckIcon } from '@chakra-ui/icons';
 
 const BigPromotion = (props) => {
+  // input: date object as input
+  // return: day difference rounded up to nearest int (date1 - date2)
+  // if return is -ve means day has passed
+  function getDayDifference(date1, date2) {
+    const diffTime = date1 - date2;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }
+
   const {
     id,
     store,
@@ -22,6 +32,7 @@ const BigPromotion = (props) => {
     numberOfCouponsClaimed,
     promotions: userPromotions,
     usedPromotions,
+    initTime,
   } = props.promotion;
 
   const { currentUser } = useAuth();
@@ -33,6 +44,7 @@ const BigPromotion = (props) => {
   const [numberOfCouponsClaimedState, setNumberOfCouponsClaimedState] =
     useState(numberOfCouponsClaimed);
   const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
     // getting download url of the logo and poster images from storage
@@ -50,6 +62,11 @@ const BigPromotion = (props) => {
       }
     }
   }, []);
+
+  let showDescription = false;
+  if (new Date() > new Date(releaseTime)) {
+    showDescription = true;
+  }
 
   const startDate = new Date(releaseTime);
   const dateString =
@@ -74,6 +91,7 @@ const BigPromotion = (props) => {
       });
       await updateDoc(doc(db, 'bigPromotions', id), {
         numberOfCouponsClaimed: numberOfCouponsClaimed + 1,
+        timestampClaim: arrayUnion(new Date().toJSON()),
       });
       setNumberOfCouponsClaimedState(numberOfCouponsClaimed + 1);
       setPromotionIsClaimed(true);
@@ -91,6 +109,33 @@ const BigPromotion = (props) => {
     });
   }
 
+  async function claimClickHandler(e) {
+    try {
+      // add promotion id to list of promotions user has
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        promotions: arrayUnion(id),
+      });
+
+      // increase the number of coupons claimed by 1
+      await updateDoc(doc(db, 'bigPromotions', id), {
+        numberOfCouponsClaimed: numberOfCouponsClaimed + 1,
+      });
+      setNumberOfCouponsClaimedState(numberOfCouponsClaimed + 1);
+      setPromotionIsClaimed(true);
+      toast({
+        title: 'Claimed',
+        description: 'Successfully claimed coupon',
+        isClosable: true,
+        duration: 3000,
+        status: 'success',
+        position: 'top',
+        icon: <CheckIcon />,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   const smallFontSize = { base: '11px', sm: '12px', md: '16px' };
   const bodyFontSize = { base: '13px', sm: '16px' };
 
@@ -106,27 +151,47 @@ const BigPromotion = (props) => {
       />
 
       <Flex direction='column' w='100%'>
-        <Text fontSize={smallFontSize} color='gray.600'>
-          {dateString}
-        </Text>
-        <Flex justifyContent='space-between' alignItems='center'>
-          <Heading as='h4' fontSize={{ base: '20px', sm: '24px', md: '28px' }}>
-            {store}
-          </Heading>
+        <Flex justifyContent='space-between' alignItems='center' mb='3px'>
+          <Text fontSize={smallFontSize} color='gray.600'>
+            {dateString}
+          </Text>
           <Text fontSize={smallFontSize} color='gray.600'>
             {remainingCouponsString}
           </Text>
         </Flex>
-        <Text fontSize={bodyFontSize} mt='5px' mb='3px'>
-          {description}
-        </Text>
+
+        <Heading
+          as='h4'
+          fontSize={{ base: '24px', sm: '24px', md: '28px' }}
+          mb='5px'
+        >
+          {store}
+        </Heading>
+
+        {showDescription && (
+          <Text fontSize={bodyFontSize} mt='5px' mb='10px'>
+            {description}
+          </Text>
+        )}
+
+        {!showDescription && (
+          <>
+            <Text fontSize={bodyFontSize}>
+              Details will be released in{' '}
+              <b>{getDayDifference(new Date(releaseTime), new Date())} days.</b>
+            </Text>
+            <Text fontSize={bodyFontSize} mb='5px'>
+              Claim yours now to secure it.
+            </Text>
+          </>
+        )}
 
         <Button
           colorScheme='red'
           size='xs'
           w='min-content'
           p='15px'
-          onClick={seeMoreClickHandler}
+          onClick={claimClickHandler}
           fontSize={bodyFontSize}
           isDisabled={remainingCoupons <= 0 || promotionIsClaimed}
           _disabled={{

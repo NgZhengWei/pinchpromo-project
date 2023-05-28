@@ -42,7 +42,7 @@ const Nav = () => {
                 textDecoration: 'none',
               }}
             >
-              Inventory
+              Claimed
             </Link>
           </Heading>
         </ListItem>

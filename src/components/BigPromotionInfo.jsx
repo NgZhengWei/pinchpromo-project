@@ -181,6 +181,7 @@ const PromotionInfo = (props) => {
       <Button
         colorScheme='red'
         pt='2px'
+        mb='20px'
         onClick={claimClickHandler}
         isDisabled={remainingCoupons <= 0 || promotionIsClaimed}
         _disabled={{

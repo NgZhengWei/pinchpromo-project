@@ -50,6 +50,7 @@ const BigPromotion = (props) => {
     title,
     promocode,
     description,
+    initTime,
     releaseTime,
     endTime,
     pathToLogo,
@@ -66,6 +67,11 @@ const BigPromotion = (props) => {
     getDownloadURL(logoStorageRef).then((url) => {
       setLogoURL(url);
     });
+  }
+
+  let showDescription = false;
+  if (new Date() > new Date(releaseTime)) {
+    showDescription = true;
   }
 
   const endDate = new Date(endTime);
@@ -101,26 +107,41 @@ const BigPromotion = (props) => {
           fontSize={smallFontSize}
           color={isExpiring() && !props.used ? 'red' : 'gray.600'}
         >
-          {'Expires ' + dateString}
+          {props.used ? 'Expired ' + dateString : 'Expires ' + dateString}
         </Text>
         <Flex justifyContent='space-between' alignItems='center'>
-          <Heading as='h4' fontSize={{ base: '20px', sm: '24px', md: '28px' }}>
+          <Heading
+            as='h4'
+            fontSize={{ base: '20px', sm: '24px', md: '28px' }}
+            mb='5px'
+          >
             {store}
           </Heading>
         </Flex>
-        <Text fontSize={bodyFontSize} mt='5px' mb='10px'>
-          {description}
-        </Text>
+        {showDescription && (
+          <Text fontSize={bodyFontSize} mb='10px'>
+            {description}
+          </Text>
+        )}
+
+        {!showDescription && (
+          <Text fontSize={bodyFontSize} mb='10px'>
+            Details will be released in{' '}
+            <b>{getDayDifference(new Date(releaseTime), new Date())} days.</b>
+          </Text>
+        )}
+
         <Button
-          colorScheme={props.used ? 'blackAlpha' : 'red'}
-          variant={props.used ? 'outline' : 'solid'}
+          colorScheme={props.used || !showDescription ? 'blackAlpha' : 'red'}
+          variant={props.used || !showDescription ? 'outline' : 'solid'}
           size='xs'
           w='min-content'
           p='15px'
+          isDisabled={!showDescription}
           onClick={useClickHandler}
           fontSize={bodyFontSize}
         >
-          {props.used ? 'See more' : 'Use'}
+          {props.used ? 'See more' : showDescription ? 'Use' : 'Coming soon'}
         </Button>
       </Flex>
     </Flex>
