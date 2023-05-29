@@ -40,6 +40,9 @@ const Signup = () => {
       email: emailRef.current.value,
       promotions: [],
       usedPromotions: [],
+      claimAvailable: 1,
+      claimCapacity: 1,
+      nextClaimTime: '',
     });
   }
 

@@ -17,6 +17,7 @@ const BigPromotion = (props) => {
     return diffDays;
   }
 
+  // consist of promotion data and user data
   const {
     id,
     store,
@@ -24,15 +25,17 @@ const BigPromotion = (props) => {
     promocode,
     description,
     releaseTime,
+    initTime,
     endTime,
     pathToLogo,
     pathToPoster,
     termsAndCondition,
     numberOfCoupons,
     numberOfCouponsClaimed,
-    promotions: userPromotions,
+    timestampClaim,
+    promotions: userPromotions, // user data from here on
     usedPromotions,
-    initTime,
+    claimAvailable,
   } = props.promotion;
 
   const { currentUser } = useAuth();
@@ -84,22 +87,6 @@ const BigPromotion = (props) => {
     remainingCouponsString = String(remainingCoupons) + ' remaining';
   }
 
-  async function claimClickHandler(e) {
-    try {
-      await updateDoc(doc(db, 'users', currentUser.uid), {
-        promotions: arrayUnion(id),
-      });
-      await updateDoc(doc(db, 'bigPromotions', id), {
-        numberOfCouponsClaimed: numberOfCouponsClaimed + 1,
-        timestampClaim: arrayUnion(new Date().toJSON()),
-      });
-      setNumberOfCouponsClaimedState(numberOfCouponsClaimed + 1);
-      setPromotionIsClaimed(true);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   function seeMoreClickHandler(e) {
     navigate('/bigpromotioninfo', {
       state: {
@@ -110,29 +97,57 @@ const BigPromotion = (props) => {
   }
 
   async function claimClickHandler(e) {
-    try {
-      // add promotion id to list of promotions user has
-      await updateDoc(doc(db, 'users', currentUser.uid), {
-        promotions: arrayUnion(id),
-      });
+    if (currentUser) {
+      // if user is logged in
 
-      // increase the number of coupons claimed by 1
-      await updateDoc(doc(db, 'bigPromotions', id), {
-        numberOfCouponsClaimed: numberOfCouponsClaimed + 1,
-      });
-      setNumberOfCouponsClaimedState(numberOfCouponsClaimed + 1);
-      setPromotionIsClaimed(true);
-      toast({
-        title: 'Claimed',
-        description: 'Successfully claimed coupon',
-        isClosable: true,
-        duration: 3000,
-        status: 'success',
-        position: 'top',
-        icon: <CheckIcon />,
-      });
-    } catch (e) {
-      console.error(e);
+      if (claimAvailable > 0) {
+        // if user is logged in and has claim tickets
+        try {
+          // add promotion id to list of promotions user has
+          await updateDoc(doc(db, 'users', currentUser.uid), {
+            promotions: arrayUnion(id),
+          });
+
+          const currentTime = new Date().toJSON();
+          // increase the number of coupons claimed by 1
+          await updateDoc(doc(db, 'bigPromotions', id), {
+            numberOfCouponsClaimed: numberOfCouponsClaimed + 1,
+            timestampClaim: {
+              ...timestampClaim,
+              [currentTime]: currentUser.uid,
+            },
+          });
+          props.decrementClaims();
+          setNumberOfCouponsClaimedState(numberOfCouponsClaimed + 1);
+          setPromotionIsClaimed(true);
+          toast({
+            title: 'Claimed',
+            description: 'Successfully claimed coupon',
+            isClosable: true,
+            duration: 3000,
+            status: 'success',
+            position: 'top',
+            icon: <CheckIcon />,
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        // if user is logged in and has no claim tickets
+        toast({
+          title: 'Oops',
+          description:
+            'Wait till your claim recharges to claim another promotion.',
+          isClosable: true,
+          duration: 5000,
+          status: 'info',
+          position: 'top',
+          icon: <CheckIcon />,
+        });
+      }
+    } else {
+      // if user is not logged in
+      navigate('/login');
     }
   }
 
