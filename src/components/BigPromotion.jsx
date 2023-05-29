@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { updateDoc, doc, arrayUnion } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { CheckIcon } from '@chakra-ui/icons';
+import { CheckIcon, WarningIcon } from '@chakra-ui/icons';
 
 const BigPromotion = (props) => {
   // input: date object as input
@@ -46,11 +46,14 @@ const BigPromotion = (props) => {
   const [promotionIsClaimed, setPromotionIsClaimed] = useState(false);
   const [numberOfCouponsClaimedState, setNumberOfCouponsClaimedState] =
     useState(numberOfCouponsClaimed);
+  // const [claimAvailableState, setClaimAvailableState] =
+  //   useState(claimAvailable);
   const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => {
     // getting download url of the logo and poster images from storage
+    console.log('BIG PROMOTION USE EFFECT RENDERED');
     getDownloadURL(logoStorageRef).then((url) => {
       setLogoURL(url);
     });
@@ -100,6 +103,7 @@ const BigPromotion = (props) => {
     if (currentUser) {
       // if user is logged in
 
+      console.log(claimAvailable);
       if (claimAvailable > 0) {
         // if user is logged in and has claim tickets
         try {
@@ -118,17 +122,25 @@ const BigPromotion = (props) => {
             },
           });
           props.decrementClaims();
+          // BUG here not sure why
+          // setClaimAvailableState((prevState) => {
+          //   console.log('new state: ' + (prevState - 1));
+          //   return prevState - 1;
+          // });
           setNumberOfCouponsClaimedState(numberOfCouponsClaimed + 1);
           setPromotionIsClaimed(true);
           toast({
-            title: 'Claimed',
-            description: 'Successfully claimed coupon',
+            title: 'Successfully claimed coupon',
+            description:
+              'Here are your claimed promotions. They will be usable after release so be sure to use them before they expire!',
             isClosable: true,
-            duration: 3000,
+            duration: 10000,
             status: 'success',
             position: 'top',
             icon: <CheckIcon />,
           });
+          // tmp fix here by redirecting user to another page
+          navigate('/mypromotions');
         } catch (e) {
           console.error(e);
         }
@@ -142,12 +154,12 @@ const BigPromotion = (props) => {
           duration: 5000,
           status: 'info',
           position: 'top',
-          icon: <CheckIcon />,
+          icon: <WarningIcon />,
         });
       }
     } else {
       // if user is not logged in
-      navigate('/login');
+      navigate('/signup');
     }
   }
 

@@ -94,9 +94,14 @@ const Nav = () => {
             <Link
               to='/signup'
               as={NavLink}
+              backgroundColor='white'
+              borderRadius='8px'
+              py='6px'
+              px='15px'
               _activeLink={{
                 color: 'white',
                 textDecoration: 'none',
+                backgroundColor: 'brandYellow.100',
               }}
             >
               Sign Up

@@ -47,6 +47,7 @@ const Promotions = () => {
   useEffect(() => {
     const getBigPromotions = async () => {
       try {
+        console.log('USE EFFECT IN PROMOTIONS RENDER');
         let filteredData;
         const data = await getDocs(bigPromotionsCollectionRef);
 
@@ -173,11 +174,19 @@ const Promotions = () => {
         nextClaimTime: newNextClaimTime,
         claimAvailable: userData.claimAvailable - 1,
       });
-      setUserData((prevState) => ({
-        ...prevState,
-        nextClaimTime: newNextClaimTime,
-        claimAvailable: userData.claimAvailable - 1,
-      }));
+      setUserData((prevState) => {
+        console.dir({
+          ...prevState,
+          nextClaimTime: newNextClaimTime,
+          claimAvailable: prevState.claimAvailable - 1,
+        });
+
+        return {
+          ...prevState,
+          nextClaimTime: newNextClaimTime,
+          claimAvailable: prevState.claimAvailable - 1,
+        };
+      });
     } catch (e) {
       console.log(e);
     }

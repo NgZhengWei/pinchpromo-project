@@ -12,6 +12,7 @@ import {
   Input,
   Link,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import { Form, NavLink } from 'react-router-dom';
@@ -19,6 +20,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
+import { CheckIcon } from '@chakra-ui/icons';
 
 const Signup = () => {
   const nameRef = useRef();
@@ -29,6 +31,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
 
   async function makeNewUser(user) {
     // console.dir(user);
@@ -62,6 +65,16 @@ const Signup = () => {
           makeNewUser(userCredentials.user);
         }
       );
+      toast({
+        title: 'Welcome to PinchPromo',
+        description:
+          'Here are the available promotions. You get to claim one promo per day so choose wisely and check back daily for exclusive SUTD promos!',
+        isClosable: true,
+        duration: 10000,
+        status: 'success',
+        position: 'top',
+        icon: <CheckIcon />,
+      });
       navigate('/');
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
