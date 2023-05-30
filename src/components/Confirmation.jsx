@@ -53,8 +53,16 @@ const Confirmation = () => {
     async function getUserDoc() {
       const userDataPromise = await getDoc(doc(db, 'users', currentUser.uid));
       setUserData(userDataPromise.data());
-    }
 
+      await currentUser
+        .sendEmailVerification({ url: 'https://pinchpromo.com/' })
+        .then(() => {
+          console.log('Verification email sent.');
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
     getUserDoc();
   }, []);
 
@@ -66,26 +74,16 @@ const Confirmation = () => {
             Confirm Your Email
           </Heading>
           <Text textAlign='center'>
-            Please check your email address for the confirmation code.
+            Please click on the link in your email address to confirm your
+            email.
           </Text>
         </CardHeader>
         <CardBody
-          pt='0px'
+          py='0px'
           display='flex'
           flexDirection='column'
           justifyContent='center'
-        >
-          <Input type='text' placeholder='Enter code here' ref={codeRef} />
-          <Button
-            mx='auto'
-            mt='20px'
-            w='100%'
-            colorScheme='red'
-            onClick={confirmClickHandler}
-          >
-            Confirm
-          </Button>
-        </CardBody>
+        ></CardBody>
       </Card>
       <Text w='90%' mx='auto' mt='10px' textAlign='center'>
         Did not get the email? Click{' '}
