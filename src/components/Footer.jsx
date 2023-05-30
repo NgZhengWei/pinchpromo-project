@@ -1,7 +1,5 @@
 import { ChatIcon, EmailIcon } from '@chakra-ui/icons';
 import { Box, HStack, Heading, Text } from '@chakra-ui/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { icon } from '@fortawesome/fontawesome-svg-core';
 
 const Footer = () => {
   return (

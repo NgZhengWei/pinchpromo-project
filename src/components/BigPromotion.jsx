@@ -182,9 +182,9 @@ const BigPromotion = (props) => {
           <Text fontSize={smallFontSize} color='gray.600'>
             {dateString}
           </Text>
-          <Text fontSize={smallFontSize} color='gray.600'>
+          {/* <Text fontSize={smallFontSize} color='gray.600'>
             {remainingCouponsString}
-          </Text>
+          </Text> */}
         </Flex>
 
         <Heading

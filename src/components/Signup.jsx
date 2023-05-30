@@ -14,13 +14,16 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Form, NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { CheckIcon } from '@chakra-ui/icons';
+import { render } from '@react-email/render';
+import { ServerClient } from 'postmark';
+import AccountConfirmationEmail from '../emailTemplate/AccountConfirmationEmail';
 
 const Signup = () => {
   const nameRef = useRef();
@@ -30,8 +33,33 @@ const Signup = () => {
   const { signup } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [confirmationCode, setConfirmationCode] = useState(
+    generateConfirmationCode()
+  );
   const navigate = useNavigate();
   const toast = useToast();
+  const client = new ServerClient(process.env.REACT_APP_POSTMARK_API_KEY);
+
+  function generateConfirmationCode() {
+    return Math.floor(100000 + Math.random() * 900000);
+  }
+
+  function sendConfirmationCodeEmail() {
+    const emailHtml = render(
+      <AccountConfirmationEmail validationCode={confirmationCode} />
+    );
+
+    const options = {
+      From: 'hello@pinchpromo.com',
+      To: 'test@blackhole.postmarkapp.com', //emailRef.current.value,
+      Subject: '[PinchPromo] Email Confirmation Code',
+      HtmlBody: emailHtml,
+      MessageStream: 'email-confirmation',
+      ReplyTo: 'hello@pinchpromo.com',
+    };
+
+    client.sendEmail(options);
+  }
 
   async function makeNewUser(user) {
     // console.dir(user);
@@ -46,6 +74,8 @@ const Signup = () => {
       claimAvailable: 1,
       claimCapacity: 1,
       nextClaimTime: '',
+      confirmationCode: confirmationCode,
+      isEmailConfirmed: false,
     });
   }
 
@@ -75,7 +105,8 @@ const Signup = () => {
         position: 'top',
         icon: <CheckIcon />,
       });
-      navigate('/');
+      sendConfirmationCodeEmail();
+      navigate('/confirmation');
     } catch (e) {
       if (e.code === 'auth/email-already-in-use') {
         setError('Email already in use.');
@@ -90,6 +121,10 @@ const Signup = () => {
 
     setLoading(false);
   }
+
+  useEffect(() => {
+    sendConfirmationCodeEmail();
+  }, []);
 
   return (
     <Box

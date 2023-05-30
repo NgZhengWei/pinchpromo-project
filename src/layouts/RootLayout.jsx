@@ -8,7 +8,7 @@ const RootLayout = () => {
   return (
     <Box>
       <Nav />
-      <Box minH='82vh' bg='gray.100' pt='20px'>
+      <Box minH='82vh' bg='gray.100' pt='15px'>
         <Outlet />
       </Box>
       <Footer />

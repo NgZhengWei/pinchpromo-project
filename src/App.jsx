@@ -17,6 +17,7 @@ import ForgotPassword from './components/ForgotPassword';
 import NewBigPromotions from './components/NewBigPromotions';
 import PromotionInfo from './components/PromotionInfo';
 import BigPromotionInfo from './components/BigPromotionInfo';
+import Confirmation from './components/Confirmation';
 
 // router and routes
 const router = createBrowserRouter(
@@ -60,6 +61,14 @@ const router = createBrowserRouter(
         element={
           <PrivateRoute>
             <BigPromotionInfo />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/confirmation'
+        element={
+          <PrivateRoute>
+            <Confirmation />
           </PrivateRoute>
         }
       />

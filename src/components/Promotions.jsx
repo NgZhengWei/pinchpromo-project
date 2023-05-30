@@ -8,7 +8,14 @@ import {
   getDoc,
   updateDoc,
 } from 'firebase/firestore';
-import { Container, Text } from '@chakra-ui/react';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Container,
+  Heading,
+  Text,
+} from '@chakra-ui/react';
 import BigPromotion from './BigPromotion';
 
 const Promotions = () => {
@@ -96,7 +103,7 @@ const Promotions = () => {
     } else if (userData.claimAvailable === userData.claimCapacity) {
       // user has all claims possible, not recharging claims
       setClaimRemainingMessage(
-        `You have ${userData.claimAvailable}/${userData.claimCapacity} claims. Claim promotions from your favourite brands now!`
+        `Claim promotions from your favourite brands now!`
       );
     } else if (userData.claimAvailable < userData.claimCapacity) {
       // user is regenerating a new claim
@@ -108,19 +115,17 @@ const Promotions = () => {
           incrementClaims();
           clearInterval(interval);
         } else {
-          const hours = Math.floor(
-            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-          let secondsString = String(seconds);
-          if (secondsString.length === 1) {
-            secondsString = '0' + secondsString;
-          }
+          const hours = String(
+            Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+          ).padStart(2, '0');
+          const minutes = String(
+            Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+          ).padStart(2, '0');
+          const seconds = String(Math.floor((diff % (1000 * 60)) / 1000));
+          let secondsString = String(seconds).padStart(2, '0');
+
           const timeToNextClaim = hours + ':' + minutes + ':' + secondsString;
-          setClaimRemainingMessage(
-            `You have ${userData.claimAvailable}/${userData.claimCapacity} claims. New claim in ${timeToNextClaim}.`
-          );
+          setClaimRemainingMessage(`New claim in ${timeToNextClaim}.`);
         }
       }, 1000);
 
@@ -195,7 +200,22 @@ const Promotions = () => {
   return (
     <Container>
       {/* {currentUser && <Text textAlign='center'>Welcome {userData.name}!</Text>} */}
-      {currentUser && <Text textAlign='center'>{claimRemainingMessage}</Text>}
+      {currentUser && (
+        <Card textAlign='center' py='15px' variant='outline'>
+          <Text>Claims available</Text>
+          <CardHeader p='0px'>
+            <Heading as='h3'>
+              {userData.claimAvailable}/{userData.claimCapacity}
+            </Heading>
+          </CardHeader>
+          <CardBody px='0px' py='0px'>
+            <Text>{claimRemainingMessage}</Text>
+          </CardBody>
+        </Card>
+      )}
+      <Heading textAlign='center' mt='25px'>
+        Promotions Available
+      </Heading>
       {bigPromotions.map((promotion) => {
         // console.log(
         //   promotion.store + ': ' + shouldDisplay(promotion.releaseTime)
