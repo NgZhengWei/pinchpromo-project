@@ -19,6 +19,15 @@ import PromotionInfo from './components/PromotionInfo';
 import BigPromotionInfo from './components/BigPromotionInfo';
 import Confirmation from './components/Confirmation';
 
+// dashboard imports
+import { Space } from 'antd';
+import AppHeader from './components/AppHeader';
+import AppFooter from './components/AppFooter';
+import AppRoutes from './components/AppRoutes';
+import SideMenu from './components/SideMenu';
+import PageContent from './components/PageContent';
+import './App.css';
+
 // router and routes
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -76,14 +85,25 @@ const router = createBrowserRouter(
       <Route path='/signup' element={<Signup />} />
       <Route path='/forgotpassword' element={<ForgotPassword />} />
     </Route>
+    
   )
 );
 
 function App() {
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <div className="App">
+      <AppHeader />
+      <Space>
+        <SideMenu></SideMenu>
+        <PageContent></PageContent>
+      </Space>
+      <AppFooter />
+    </div>
+
+    // Original code to route:
+    // <AuthProvider>
+    //   <RouterProvider router={router} />
+    // </AuthProvider>
   );
 }
 export default App;
