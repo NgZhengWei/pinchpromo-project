@@ -125,15 +125,16 @@ const Signup = () => {
           <Form onSubmit={handleSumit}>
             <FormControl mb='20px'>
               <FormLabel>Name</FormLabel>
-              <Input type='text' name='name' ref={nameRef} required />
+              <Input id = 'name' type='text' name='name' ref={nameRef} required />
             </FormControl>
             <FormControl mb='20px'>
               <FormLabel>Email</FormLabel>
-              <Input type='email' name='email' ref={emailRef} required />
+              <Input id = 'email' type='email' name='email' ref={emailRef} required />
             </FormControl>
             <FormControl mb='20px'>
               <FormLabel>Password</FormLabel>
               <Input
+                id = 'password'
                 type='password'
                 name='password'
                 ref={passwordRef}
@@ -143,13 +144,14 @@ const Signup = () => {
             <FormControl mb='20px'>
               <FormLabel>Confirm Password</FormLabel>
               <Input
+                id = 'confirmPassword'
                 type='password'
                 name='confirm-password'
                 ref={confirmPasswordRef}
                 isRequired
               />
             </FormControl>
-            <Button disabled={loading} type='submit' w='100%' colorScheme='red'>
+            <Button id ='signUp' disabled={loading} type='submit' w='100%' colorScheme='red'>
               Sign Up
             </Button>
           </Form>
