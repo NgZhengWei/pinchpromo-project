@@ -23,7 +23,7 @@ const SideMenu = () => {
                     icon:<AppstoreOutlined />,
                 },
                 {
-                    label:"Inventory",
+                    label:"Promotions",
                     key:"/inventory",
                     icon:<ShopOutlined/>,
                 },
