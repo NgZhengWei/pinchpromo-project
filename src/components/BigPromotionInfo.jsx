@@ -62,6 +62,8 @@ const PromotionInfo = (props) => {
   const bodyFontSize = { base: '13px', sm: '16px' };
 
   useEffect(() => {
+    document.title = 'Big Promotion Info';
+
     // async function getPromotion() {
     //   const promotionPromise = await getDoc(doc(db, 'bigPromotions', id));
     //   const promotion = promotionPromise.data();
