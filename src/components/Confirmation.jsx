@@ -3,79 +3,59 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Container,
   Heading,
-  Input,
   Link,
   Text,
-  useToast,
 } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import { BellIcon } from '@chakra-ui/icons';
+import { useNavigate } from 'react-router-dom';
 
 const Confirmation = () => {
-  const codeRef = useRef();
   const { currentUser } = useAuth();
-  const [userData, setUserData] = useState({});
-  const toast = useToast();
+  const [showSkipButton, setShowSkipButton] = useState(false);
+  const navigate = useNavigate();
 
-  function resendEmailClickHandler(e) {
-    console.log('RESEND EMAIL');
+  async function sendEmailVerification() {
+    await currentUser
+      .sendEmailVerification({ url: 'https://pinchpromo.com/' })
+      .then(() => {
+        console.log('Verification email sent.');
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
-  function confirmClickHandler(e) {
-    e.preventDefault();
+  function resendEmailClickHandler(e) {
+    sendEmailVerification();
+  }
 
-    if (codeRef.current.value === String(userData.confirmationCode)) {
-      try {
-        updateDoc(doc(db, 'users', currentUser.uid), {
-          isEmailConfirmed: true,
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      toast({
-        title: 'Confirmation Code Invalid',
-        description: 'Please check your email for the confirmation code.',
-        isClosable: true,
-        duration: 3000,
-        status: 'error',
-        position: 'top',
-        icon: <BellIcon />,
-      });
-    }
+  function verifyLaterClickHandler(e) {
+    navigate('/');
   }
 
   useEffect(() => {
-    async function getUserDoc() {
-      const userDataPromise = await getDoc(doc(db, 'users', currentUser.uid));
-      setUserData(userDataPromise.data());
+    document.title = 'Email Confirmation';
 
-      await currentUser
-        .sendEmailVerification({ url: 'https://pinchpromo.com/' })
-        .then(() => {
-          console.log('Verification email sent.');
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-    getUserDoc();
+    window.setTimeout(() => {
+      setShowSkipButton(true);
+    }, 4000);
+
+    sendEmailVerification();
   }, []);
 
   return (
-    <>
-      <Card w='90%' mx='auto'>
+    <Container>
+      <Card w='90%' mx='auto' py='5px'>
         <CardHeader>
-          <Heading textAlign='center' mb='10px'>
+          <Heading textAlign='center' mb='15px'>
             Confirm Your Email
           </Heading>
           <Text textAlign='center'>
             Please click on the link in your email address to confirm your
-            email.
+            email. Check your spam if you don't see it!
           </Text>
         </CardHeader>
         <CardBody
@@ -84,6 +64,14 @@ const Confirmation = () => {
           flexDirection='column'
           justifyContent='center'
         ></CardBody>
+        {/* <Button w='50%' mx='auto' mb='20px' backgroundColor='brandYellow.100'>
+          Email verified
+        </Button> */}
+        {showSkipButton && (
+          <Button w='50%' mx='auto' mb='20px' onClick={verifyLaterClickHandler}>
+            Verify email later
+          </Button>
+        )}
       </Card>
       <Text w='90%' mx='auto' mt='10px' textAlign='center'>
         Did not get the email? Click{' '}
@@ -92,7 +80,7 @@ const Confirmation = () => {
         </Link>{' '}
         to resend.
       </Text>
-    </>
+    </Container>
   );
 };
 
