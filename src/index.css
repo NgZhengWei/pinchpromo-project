@@ -1,1 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiko:wght@400;600;700&display=swap');
+@font-face {
+  font-family: "AmikoBold";
+  src: url(./fonts/Amiko/Amiko-Bold.ttf);
+}
+
+@font-face {
+  font-family: "AmikoRegular";
+  src: url(./fonts/Amiko/Amiko-Regular.ttf);
+}
+
+@font-face {
+  font-family: "AmikoSemiBold";
+  src: url(./fonts/Amiko/Amiko-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: "Arial Rounded MT Bold";
+  src: url(./fonts/ArialRoundedMTBold/ARLRDBD.ttf);
+}

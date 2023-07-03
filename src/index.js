@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
-import ReactGA from "react-ga4";
 
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
@@ -20,8 +19,6 @@ const fonts = {
 };
 
 const theme = extendTheme({ colors, fonts });
-
-ReactGA.initialize("G-NYY4G466WY");
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
