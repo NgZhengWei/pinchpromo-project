@@ -13,7 +13,7 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Form } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -23,6 +23,10 @@ const ForgotPassword = () => {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Forgot Password';
+  }, []);
 
   async function handleSumit(e) {
     e.preventDefault();
