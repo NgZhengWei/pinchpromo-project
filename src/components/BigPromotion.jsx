@@ -2,7 +2,7 @@ import { Button, Flex, Heading, Image, Text, useToast } from '@chakra-ui/react';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { storage, db } from '../firebase';
 import { useEffect, useState } from 'react';
-import { updateDoc, doc, arrayUnion } from 'firebase/firestore';
+import { updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { CheckIcon, WarningIcon } from '@chakra-ui/icons';
@@ -19,7 +19,7 @@ const BigPromotion = (props) => {
 
   // consist of promotion data and user data
   const {
-    id,
+    id, //promotion id
     store,
     title,
     promocode,
@@ -53,7 +53,6 @@ const BigPromotion = (props) => {
 
   useEffect(() => {
     // getting download url of the logo and poster images from storage
-    console.log('BIG PROMOTION USE EFFECT RENDERED');
     getDownloadURL(logoStorageRef).then((url) => {
       setLogoURL(url);
     });
@@ -102,9 +101,11 @@ const BigPromotion = (props) => {
   async function claimClickHandler(e) {
     if (currentUser) {
       // if user is logged in
+      // need to pull user data here again to double check if claim is indeed
+      // const userPromise = await getDoc(doc(db, 'users', currentUser.uid));
+      // const updatedClaimAvailable = userPromise.data();
 
-      console.log(claimAvailable);
-      if (claimAvailable > 0) {
+      if (props.userData.claimAvailable > 0) {
         // if user is logged in and has claim tickets
         try {
           // add promotion id to list of promotions user has
@@ -136,7 +137,7 @@ const BigPromotion = (props) => {
             isClosable: true,
             duration: 10000,
             status: 'success',
-            position: 'top',
+            position: 'bottom',
             icon: <CheckIcon />,
           });
           // tmp fix here by redirecting user to another page
@@ -163,8 +164,24 @@ const BigPromotion = (props) => {
     }
   }
 
-  const smallFontSize = { base: '11px', sm: '12px', md: '16px' };
+  function moreInfoClickHandler(e) {
+    navigate('/promotioncompanyinfo', {
+      state: { ...props.promotion },
+    });
+  }
+
+  const smallFontSize = { base: '11px', sm: '12px', md: '13px' };
   const bodyFontSize = { base: '13px', sm: '16px' };
+
+  const daysTillPromoDisappear = getDayDifference(
+    new Date(new Date(initTime).getTime() + 7 * 24 * 60 * 60 * 1000),
+    new Date()
+  );
+
+  const daysTillPromoRelease = getDayDifference(
+    new Date(releaseTime),
+    new Date()
+  );
 
   return (
     <Flex p='20px' borderBottom='1px solid' borderColor='gray.400'>
@@ -175,12 +192,18 @@ const BigPromotion = (props) => {
         objectFit='cover'
         mr='15px'
         my='auto'
+        onClick={moreInfoClickHandler}
       />
 
       <Flex direction='column' w='100%'>
         <Flex justifyContent='space-between' alignItems='center' mb='3px'>
           <Text fontSize={smallFontSize} color='gray.600'>
-            {dateString}
+            {/* Release: {dateString} */}
+            {daysTillPromoRelease > 1
+              ? `Details released in ${daysTillPromoRelease} days`
+              : daysTillPromoRelease === 1
+              ? `Details released in ${daysTillPromoRelease} day`
+              : ''}
           </Text>
           {/* <Text fontSize={smallFontSize} color='gray.600'>
             {remainingCouponsString}
@@ -191,6 +214,7 @@ const BigPromotion = (props) => {
           as='h4'
           fontSize={{ base: '24px', sm: '24px', md: '28px' }}
           mb='5px'
+          onClick={moreInfoClickHandler}
         >
           {store}
         </Heading>
@@ -204,11 +228,14 @@ const BigPromotion = (props) => {
         {!showDescription && (
           <>
             <Text fontSize={bodyFontSize}>
+              Promotion will disappear in <b>{daysTillPromoDisappear} days.</b>
+            </Text>
+            {/* <Text fontSize={bodyFontSize}>
               Details will be released in{' '}
               <b>{getDayDifference(new Date(releaseTime), new Date())} days.</b>
-            </Text>
+            </Text> */}
             <Text fontSize={bodyFontSize} mb='5px'>
-              Claim yours now to secure it.
+              Claim yours now to secure it for use after details are released.
             </Text>
           </>
         )}
