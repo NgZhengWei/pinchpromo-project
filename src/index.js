@@ -1,25 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import "./index.css";
+import ReactGA from "react-ga4";
 
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 const colors = {
   brandYellow: {
-    100: '#FFD124',
+    100: "#FFD124",
+    200: "#e3b305",
   },
 };
 
 const fonts = {
-  body: 'Amiko',
-  heading: 'Arial Rounded MT Bold',
+  body: "AmikoRegular",
+  heading: "Arial Rounded MT Bold",
 };
 
 const theme = extendTheme({ colors, fonts });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+ReactGA.initialize("G-NYY4G466WY");
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
