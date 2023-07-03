@@ -1,28 +1,27 @@
-import { Button, Flex, Heading, Image, Text } from '@chakra-ui/react';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { storage, db } from '../firebase';
-import { useEffect, useState } from 'react';
-import { updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage, db } from "../firebase";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const BigPromotion = (props) => {
   const { currentUser } = useAuth();
   // const posterStorageRef = ref(storage, pathToPoster);
-  const [logoURL, setLogoURL] = useState('');
+  const [logoURL, setLogoURL] = useState("");
   // const [posterURL, setPosterURL] = useState();
-  const [promotion, setPromotion] = useState({});
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function getPromotionData() {
-      const promotionPromise = await getDoc(
-        doc(db, 'bigPromotions', props.promotionId)
-      );
-      setPromotion(promotionPromise.data());
-    }
-    getPromotionData();
-
+    // async function getPromotionData() {
+    //   const promotionPromise = await getDoc(
+    //     doc(db, 'bigPromotions', props.promotionId)
+    //   );
+    //   setPromotion(promotionPromise.data());
+    // }
+    // getPromotionData();
     // getDownloadURL(posterStorageRef).then((url) => {
     //   setPosterURL(url);
     // });
@@ -58,16 +57,13 @@ const BigPromotion = (props) => {
     termsAndCondition,
     numberOfCoupons,
     numberOfCouponsClaimed,
-    promotions: userPromotions,
-  } = promotion;
+  } = props.promotion;
 
   // getting download url of the logo and poster images from storage
-  if (Object.keys(promotion).length !== 0) {
-    const logoStorageRef = ref(storage, pathToLogo);
-    getDownloadURL(logoStorageRef).then((url) => {
-      setLogoURL(url);
-    });
-  }
+  const logoStorageRef = ref(storage, pathToLogo);
+  getDownloadURL(logoStorageRef).then((url) => {
+    setLogoURL(url);
+  });
 
   let showDescription = false;
   if (new Date() > new Date(releaseTime)) {
@@ -77,61 +73,67 @@ const BigPromotion = (props) => {
   const endDate = new Date(endTime);
   const dateString =
     String(endDate.getDate()) +
-    ' ' +
-    endDate.toLocaleString('default', { month: 'long' }) +
-    ' ' +
+    " " +
+    endDate.toLocaleString("default", { month: "long" }) +
+    " " +
     String(endDate.getFullYear());
 
   async function useClickHandler(e) {
-    navigate('/promotioninfo', {
-      state: { promotionId: props.promotionId, used: props.used },
+    navigate("/promotioninfo", {
+      state: {
+        promotion: props.promotion,
+        used: props.used,
+        promotionId: id,
+      },
     });
   }
 
-  const smallFontSize = { base: '11px', sm: '12px', md: '16px' };
-  const bodyFontSize = { base: '13px', sm: '16px' };
+  const smallFontSize = { base: "11px", sm: "12px", md: "16px" };
+  const bodyFontSize = { base: "13px", sm: "16px" };
 
   return (
-    <Flex p='20px' borderBottom='1px solid' borderColor='gray.400'>
+    <Flex p="20px" borderBottom="1px solid" borderColor="gray.400">
       <Image
-        boxSize={{ base: '90px', sm: '100px', md: '100px' }}
+        boxSize={{ base: "90px", sm: "100px", md: "100px" }}
         src={logoURL}
-        alt={store + ' logo'}
-        objectFit='cover'
-        mr='15px'
-        my='auto'
+        alt={store + " logo"}
+        objectFit="cover"
+        mr="15px"
+        my="auto"
+        onClick={showDescription ? useClickHandler : null}
       />
 
-      <Flex direction='column' w='100%'>
+      <Flex direction="column" w="100%">
         <Text
           fontSize={smallFontSize}
-          color={isExpiring() && !props.used ? 'red' : 'gray.600'}
+          color={isExpiring() && !props.used ? "red" : "gray.600"}
         >
-          {props.used ? 'Expired ' + dateString : 'Expires ' + dateString}
+          {props.used ? "Expired " + dateString : "Expires " + dateString}
         </Text>
-        <Flex justifyContent='space-between' alignItems='center'>
+        <Flex justifyContent="space-between" alignItems="center">
           <Heading
-            as='h4'
-            fontSize={{ base: '20px', sm: '24px', md: '28px' }}
-            mb='5px'
+            as="h4"
+            fontSize={{ base: "20px", sm: "24px", md: "28px" }}
+            mb="5px"
+            onClick={showDescription ? useClickHandler : null}
           >
             {store}
           </Heading>
         </Flex>
         {showDescription && (
-          <Text fontSize={bodyFontSize} mb='10px'>
+          <Text fontSize={bodyFontSize} mb="10px">
             {description}
           </Text>
         )}
 
         {!showDescription && (
-          <Text fontSize={bodyFontSize} mb='10px'>
-            Details will be released in{' '}
+          <Text fontSize={bodyFontSize} mb="10px">
+            Details will be released in{" "}
             <b>{getDayDifference(new Date(releaseTime), new Date())} days.</b>
           </Text>
         )}
 
-        <Button
+        {/* <Button
           colorScheme={props.used || !showDescription ? 'blackAlpha' : 'red'}
           variant={props.used || !showDescription ? 'outline' : 'solid'}
           size='xs'
@@ -141,8 +143,8 @@ const BigPromotion = (props) => {
           onClick={useClickHandler}
           fontSize={bodyFontSize}
         >
-          {props.used ? 'See more' : showDescription ? 'Use' : 'Coming soon'}
-        </Button>
+          {props.used ? 'Read more' : showDescription ? 'Use' : 'Coming soon'}
+        </Button> */}
       </Flex>
     </Flex>
   );
