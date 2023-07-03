@@ -15,8 +15,25 @@ import {
   Container,
   Heading,
   Text,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+  Button,
+  Link,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  Box,
+  AccordionIcon,
+  AccordionPanel,
 } from '@chakra-ui/react';
 import BigPromotion from './BigPromotion';
+import { QuestionIcon } from '@chakra-ui/icons';
 
 const Promotions = () => {
   const { currentUser } = useAuth();
@@ -25,6 +42,7 @@ const Promotions = () => {
   // const [timeToNextClaim, setTimeToNextClaim] = useState('');
   const [claimRemainingMessage, setClaimRemainingMessage] = useState('');
   const [runningInterval, setRunningInterval] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const bigPromotionsCollectionRef = collection(db, 'bigPromotions');
 
@@ -52,23 +70,28 @@ const Promotions = () => {
   }
 
   useEffect(() => {
+    document.title = 'Promotions';
+
     const getBigPromotions = async () => {
       try {
-        console.log('USE EFFECT IN PROMOTIONS RENDER');
         let filteredData;
         const data = await getDocs(bigPromotionsCollectionRef);
 
         if (currentUser) {
-          const userData = await getDoc(userRef);
-          setUserData(userData.data());
+          try {
+            const userData = await getDoc(userRef);
+            setUserData(userData.data());
 
-          filteredData = data.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-            promotions: userData.data().promotions,
-            usedPromotions: userData.data().usedPromotions,
-            claimAvailable: userData.data().claimAvailable,
-          }));
+            filteredData = data.docs.map((doc) => ({
+              ...doc.data(),
+              id: doc.id,
+              promotions: userData.data().promotions,
+              usedPromotions: userData.data().usedPromotions,
+              claimAvailable: userData.data().claimAvailable,
+            }));
+          } catch (e) {
+            console.error(e);
+          }
         } else {
           filteredData = data.docs.map((doc) => ({
             ...doc.data(),
@@ -77,6 +100,11 @@ const Promotions = () => {
             usedPromotions: [],
           }));
         }
+
+        // sort by initTime, latest release on top
+        filteredData.sort(function (a, b) {
+          return new Date(b.initTime) - new Date(a.initTime);
+        });
 
         setBigPromotions(filteredData);
       } catch (e) {
@@ -91,6 +119,7 @@ const Promotions = () => {
     manageClaims();
   }, [userData]);
 
+  // show number of claims available
   function manageClaims() {
     // clear existing intervals. This is for when user uses a claim and it causes 2 intervals to exist, resulting in a bug
     if (runningInterval) {
@@ -99,6 +128,7 @@ const Promotions = () => {
     }
 
     if (Object.keys(userData).length === 0) {
+      // data has not yet loaded
       setClaimRemainingMessage('');
     } else if (userData.claimAvailable === userData.claimCapacity) {
       // user has all claims possible, not recharging claims
@@ -134,6 +164,13 @@ const Promotions = () => {
   }
 
   async function incrementClaims() {
+    const today = new Date();
+    // used here to make reset time 12am the next day
+    const tomorrow = new Date(today);
+    // setDate auto changes date to next month if it is say 31 Jul
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
     try {
       if (userData.claimAvailable + 1 >= userData.claimCapacity) {
         // if user has reached their claim capacity, increment claim by 1 and set next claim time to empty so they are not regenerating the next claim
@@ -149,16 +186,12 @@ const Promotions = () => {
       } else {
         // user has not reached claim capacity, increment claim and start regenerating the next claim
         updateDoc(doc(db, 'users', currentUser.uid), {
-          nextClaimTime: new Date(
-            new Date().getTime() + 60 * 60 * 24 * 1000
-          ).toJSON(),
+          nextClaimTime: tomorrow.toJSON(),
           claimAvailable: userData.claimAvailable + 1,
         });
         setUserData((prevState) => ({
           ...prevState,
-          nextClaimTime: new Date(
-            new Date().getTime() + 60 * 60 * 24 * 1000
-          ).toJSON(),
+          nextClaimTime: tomorrow.toJSON(),
           claimAvailable: userData.claimAvailable + 1,
         }));
       }
@@ -169,39 +202,90 @@ const Promotions = () => {
 
   async function decrementClaims() {
     try {
-      const currentTime = new Date().getTime();
+      const today = new Date();
+      // used here to make reset time 12am the next day
+      const tomorrow = new Date(today);
+      // setDate auto changes date to next month if it is say 31 Jul
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+
       // nextClaimTime will remain as it is, it it's already defined. Else we will set it to be 24hrs from now
       const newNextClaimTime =
         userData.nextClaimTime.length === 0
-          ? new Date(currentTime + 60 * 60 * 24 * 1000).toJSON()
+          ? tomorrow.toJSON()
           : userData.nextClaimTime;
       updateDoc(doc(db, 'users', currentUser.uid), {
         nextClaimTime: newNextClaimTime,
         claimAvailable: userData.claimAvailable - 1,
       });
-      setUserData((prevState) => {
-        console.dir({
-          ...prevState,
-          nextClaimTime: newNextClaimTime,
-          claimAvailable: prevState.claimAvailable - 1,
-        });
+      // setUserData((prevState) => {
+      //   console.dir({
+      //     ...prevState,
+      //     nextClaimTime: newNextClaimTime,
+      //     claimAvailable: prevState.claimAvailable - 1,
+      //   });
 
-        return {
-          ...prevState,
-          nextClaimTime: newNextClaimTime,
-          claimAvailable: prevState.claimAvailable - 1,
-        };
-      });
+      //   return {
+      //     ...prevState,
+      //     nextClaimTime: newNextClaimTime,
+      //     claimAvailable: prevState.claimAvailable - 1,
+      //   };
+      // });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 
+  const newUserInfoAccordion = (
+    <Accordion allowToggle background='gray.100'>
+      <AccordionItem>
+        <AccordionButton>
+          <Box as='span' flex='1' textAlign='left'>
+            How PinchPromo Works
+          </Box>
+          <AccordionIcon />
+        </AccordionButton>
+        <AccordionPanel>
+          <Text mb='15px'>
+            New exclusive promos are <b>released daily</b> for you to maximise
+            your dollar.
+          </Text>
+
+          <Text mb='15px'>
+            Each promo will only be <b>claimable for 7 days</b> in "Claim
+            Promos" tab before disappearing. You get 1 claim per day which
+            resets at 12am, so choose wisely.
+          </Text>
+
+          <Text mb='15px'>
+            <Link href='/signup' color='blue.400'>
+              Sign Up Now
+            </Link>{' '}
+            to start saving 😊
+          </Text>
+
+          <Text>
+            For more info, refer to our{' '}
+            <Link href='/howtouse' color='blue.400'>
+              how to use
+            </Link>{' '}
+            page!
+          </Text>
+        </AccordionPanel>
+      </AccordionItem>
+    </Accordion>
+  );
+
   return (
-    <Container>
-      {/* {currentUser && <Text textAlign='center'>Welcome {userData.name}!</Text>} */}
+    <Container pb='20px'>
+      {!currentUser && newUserInfoAccordion}
       {currentUser && (
-        <Card textAlign='center' py='15px' variant='outline'>
+        <Card
+          textAlign='center'
+          py='15px'
+          variant='outline'
+          position='relative'
+        >
           <Text>Claims available</Text>
           <CardHeader p='0px'>
             <Heading as='h3'>
@@ -211,29 +295,92 @@ const Promotions = () => {
           <CardBody px='0px' py='0px'>
             <Text>{claimRemainingMessage}</Text>
           </CardBody>
+
+          <Button
+            onClick={onOpen}
+            variant='unstyled'
+            position='absolute'
+            right='5px'
+            top='5px'
+          >
+            <QuestionIcon boxSize={6} _hover={{ color: 'white' }} />
+          </Button>
+
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader mt='20px'>
+                <Heading textAlign='center'> How does PinchPromo work?</Heading>
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Text mb='15px'>
+                  New exclusive promos are <b>released daily</b> for you to
+                  maximise your dollar.
+                </Text>
+
+                <Text mb='15px'>
+                  Each promo will only be <b>claimable for 7 days</b> in "Claim
+                  Promos" tab before disappearing. You get 1 claim per day which
+                  resets at 12am, so choose wisely!
+                </Text>
+
+                <Text mb='15px'>
+                  Your claimed promos are found in the "Claimed" tab and can be{' '}
+                  <b>used once the details are released</b>. So be sure to check
+                  back daily to secure the best promotions.
+                </Text>
+
+                <Text>Happy Pinching Promos 😊</Text>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button
+                  backgroundColor='brandYellow.100'
+                  mr={3}
+                  onClick={onClose}
+                  _focus={{ backgroundColor: 'brandYellow.200' }}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </Card>
       )}
-      <Heading textAlign='center' mt='25px'>
-        Promotions Available
-      </Heading>
-      {bigPromotions.map((promotion) => {
-        // console.log(
-        //   promotion.store + ': ' + shouldDisplay(promotion.releaseTime)
-        // );
-        // if (shouldDisplay(promotion.releaseTime) === true) {
-        //   return <BigPromotion promotion={promotion} key={promotion.id} />;
-        // } else {
-        //   return '';
-        // }
 
-        return (
-          <BigPromotion
-            promotion={promotion}
-            key={promotion.id}
-            decrementClaims={decrementClaims}
-          />
-        );
-      })}
+      {bigPromotions.length > 0 && (
+        <Heading textAlign='center' mt='25px'>
+          Promotions Available
+        </Heading>
+      )}
+      {bigPromotions.length > 0 &&
+        bigPromotions.map((promotion) => {
+          // if current time has not exceeded init time, dont show it
+          if (new Date() - new Date(promotion.initTime) < 0) {
+            return '';
+          } else if (
+            getDayDifference(new Date(), new Date(promotion.initTime)) > 7
+          ) {
+            // if a week has passed since the promotion has been released, dont display it.
+            return '';
+          }
+
+          return (
+            <BigPromotion
+              promotion={promotion}
+              key={promotion.id}
+              decrementClaims={decrementClaims}
+              userData={userData}
+            />
+          );
+        })}
+
+      {bigPromotions.length === 0 && (
+        <Heading textAlign='center' mt='15px'>
+          Refresh the page to view promos!
+        </Heading>
+      )}
     </Container>
   );
 };
