@@ -13,8 +13,13 @@ import {
   Link,
   Text,
   useToast,
+  Checkbox,
+  RadioGroup,
+  Stack,
+  Radio,
+  HStack,
 } from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Form, NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -24,9 +29,11 @@ import { CheckIcon } from '@chakra-ui/icons';
 
 const Signup = () => {
   const nameRef = useRef();
+  const [gender, setGender] = useState('male');
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+  const receiveEmailRef = useRef();
   const { signup } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,10 +41,15 @@ const Signup = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
+  useEffect(() => {
+    document.title = 'Signup';
+  }, []);
+
   async function makeNewUser(user) {
     // console.dir(user);
     // console.log(user.email);
     // console.log(user.uid);
+    const currentTime = new Date().toJSON();
 
     await setDoc(doc(db, 'users', user.uid), {
       name: nameRef.current.value,
@@ -47,6 +59,9 @@ const Signup = () => {
       claimAvailable: 1,
       claimCapacity: 1,
       nextClaimTime: '',
+      timeCreated: currentTime,
+      receiveEmailMarketing: receiveEmailRef.current.checked,
+      gender: gender,
     });
   }
 
@@ -60,12 +75,18 @@ const Signup = () => {
     try {
       setError('');
       setLoading(true);
-      await signup(emailRef.current.value, passwordRef.current.value).then(
-        (userCredentials) => {
-          // console.dir(userCredentials);
+      await signup(emailRef.current.value, passwordRef.current.value)
+        .then((userCredentials) => {
+          // set user details in firebase user table
           makeNewUser(userCredentials.user);
-        }
-      );
+          // add user's name to user credentials in auth
+          return userCredentials.user.updateProfile({
+            displayName: nameRef.current.value,
+          });
+        })
+        .catch((e) => {
+          console.error(e);
+        });
       toast({
         title: 'Welcome to PinchPromo',
         description:
@@ -127,10 +148,23 @@ const Signup = () => {
               <FormLabel>Name</FormLabel>
               <Input type='text' name='name' ref={nameRef} required />
             </FormControl>
+
+            <RadioGroup mb='20px' onChange={setGender} value={gender} required>
+              Gender:
+              <HStack>
+                <Radio value='male' checked='checked'>
+                  Male
+                </Radio>
+                <Radio value='female'>Female</Radio>
+                <Radio value='other'>Other</Radio>
+              </HStack>
+            </RadioGroup>
+
             <FormControl mb='20px'>
               <FormLabel>Email</FormLabel>
               <Input type='email' name='email' ref={emailRef} required />
             </FormControl>
+
             <FormControl mb='20px'>
               <FormLabel>Password</FormLabel>
               <Input
@@ -140,6 +174,7 @@ const Signup = () => {
                 isRequired
               />
             </FormControl>
+
             <FormControl mb='20px'>
               <FormLabel>Confirm Password</FormLabel>
               <Input
@@ -148,6 +183,14 @@ const Signup = () => {
                 ref={confirmPasswordRef}
                 isRequired
               />
+            </FormControl>
+
+            <FormControl mb='20px'>
+              <Checkbox defaultChecked ref={receiveEmailRef}>
+                <Text fontSize={{ base: '13px', sm: '16px' }}>
+                  I agree to receive emails but not spam.
+                </Text>
+              </Checkbox>
             </FormControl>
             <Button disabled={loading} type='submit' w='100%' colorScheme='red'>
               Sign Up
