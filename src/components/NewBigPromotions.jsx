@@ -10,18 +10,25 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Select,
   Text,
-} from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
-import { Form } from 'react-router-dom';
-import { setDoc, doc } from 'firebase/firestore';
-import { db, storage } from '../firebase';
-import { ref, uploadBytes } from 'firebase/storage';
-import { v4 } from 'uuid';
+  Textarea,
+} from "@chakra-ui/react";
+import React, { useRef, useState, useEffect } from "react";
+import { Form } from "react-router-dom";
+import { setDoc, doc } from "firebase/firestore";
+import { db, storage } from "../firebase";
+import { ref, uploadBytes } from "firebase/storage";
+import { useAuth } from "../contexts/AuthContext";
 
 const NewBigPromotions = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { currentUser } = useAuth();
   const storeRef = useRef();
   const titleRef = useRef();
+  const aboutBusinessRef = useRef();
+  const businessWebsiteRef = useRef();
+  const businessSocialRef = useRef();
   const descriptionRef = useRef();
   const termsAndConditionsRef = useRef();
   const promocodeRef = useRef();
@@ -31,27 +38,44 @@ const NewBigPromotions = () => {
   const logoRef = useRef();
   const posterRef = useRef();
   const numCouponsRef = useRef();
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const claimMethodRef = useRef();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title = "Create Big Promotion";
+
+    // only allow access if user is admin
+    const adminId = [
+      "UHFdQbxBJ9hHrnoCppzABULrOAh2", // zw
+      "esQ0VPngPXhhTyXURe8tgNkiGHs1", // al
+      "MMyr0QlXvYet4xvWHzWkriWGm7j2", // ploxy
+      "Yd2oFY3KnZXmnZHwjM645qvuZVC2", // nic
+      "eM4zSPLwR8WOSptfwP9Uu9goBjY2", // admin in test environment
+    ];
+    if (adminId.includes(currentUser.uid)) {
+      setIsAdmin(true);
+    }
+  }, []);
 
   async function handleSumit(e) {
     e.preventDefault();
     try {
       setLoading(true);
-      setError('');
-      setSuccess('');
+      setError("");
+      setSuccess("");
       // save logo and poster to storage first
       const logoPath =
-        'images/bigPromotions/logo/' +
+        "images/bigPromotions/logo/" +
         storeRef.current.value +
         releaseTimeRef.current.value +
-        v4();
+        String(new Date().getTime());
       const posterPath =
-        'images/bigPromotions/poster/' +
+        "images/bigPromotions/poster/" +
         storeRef.current.value +
         releaseTimeRef.current.value +
-        v4();
+        String(new Date().getTime());
       const logoStorageRef = ref(storage, logoPath);
       const posterStorageRef = ref(storage, posterPath);
 
@@ -59,22 +83,25 @@ const NewBigPromotions = () => {
         uploadBytes(logoStorageRef, logoRef.current.files[0]);
         uploadBytes(posterStorageRef, posterRef.current.files[0]);
       } else {
-        setError('Logo and poster image cannot be empty');
+        setError("Logo and poster image cannot be empty");
       }
       // Adding using store name as document id
       await setDoc(
         doc(
           db,
-          'bigPromotions',
+          "bigPromotions",
           storeRef.current.value +
-            '-' +
+            "-" +
             releaseTimeRef.current.value +
-            '-' +
-            v4()
+            "-" +
+            String(new Date().getTime())
         ),
         {
           store: storeRef.current.value,
           title: titleRef.current.value,
+          aboutBusiness: aboutBusinessRef.current.value,
+          businessWebsite: businessWebsiteRef.current.value,
+          businessSocial: businessSocialRef.current.value,
           description: descriptionRef.current.value,
           termsAndCondition: termsAndConditionsRef.current.value,
           pathToLogo: logoPath,
@@ -86,9 +113,10 @@ const NewBigPromotions = () => {
           numberOfCoupons: parseInt(numCouponsRef.current.value),
           numberOfCouponsClaimed: 0,
           timestampClaim: [],
+          claimMethod: claimMethodRef.current.value,
         }
       );
-      setSuccess('Successfully added big promotion.');
+      setSuccess("Successfully added big promotion.");
       window.scrollTo(0, 0);
       // Adding without document id
       // await addDoc(bigPromotionsCollectionRef, {
@@ -111,135 +139,164 @@ const NewBigPromotions = () => {
 
   return (
     <Box
-      display='flex'
-      w='90%'
-      mx='auto'
-      maxW='800px'
-      flexDir='column'
-      alignItems='center'
+      display="flex"
+      w="90%"
+      mx="auto"
+      maxW="800px"
+      flexDir="column"
+      alignItems="center"
     >
-      <Card w='100%' mb='20px'>
-        <CardHeader
-          fontFamily='Arial Rounded MT Bold'
-          textAlign='center'
-          fontSize='30px'
-        >
-          Make Big Promo
-        </CardHeader>
-        <CardBody>
-          {error && (
-            <Alert
-              status='error'
-              variant='left-accent'
-              borderRadius={4}
-              mb='10px'
-            >
-              <AlertIcon />
-              <AlertTitle>{error}</AlertTitle>
-            </Alert>
-          )}
-          {success && (
-            <Alert
-              status='success'
-              variant='left-accent'
-              borderRadius={4}
-              mb='10px'
-            >
-              <AlertIcon />
-              <AlertTitle>{success}</AlertTitle>
-            </Alert>
-          )}
+      {isAdmin && (
+        <Card w="100%" mb="20px">
+          <CardHeader
+            fontFamily="Arial Rounded MT Bold"
+            textAlign="center"
+            fontSize="30px"
+          >
+            Make Big Promo
+          </CardHeader>
+          <CardBody>
+            {error && (
+              <Alert
+                status="error"
+                variant="left-accent"
+                borderRadius={4}
+                mb="10px"
+              >
+                <AlertIcon />
+                <AlertTitle>{error}</AlertTitle>
+              </Alert>
+            )}
+            {success && (
+              <Alert
+                status="success"
+                variant="left-accent"
+                borderRadius={4}
+                mb="10px"
+              >
+                <AlertIcon />
+                <AlertTitle>{success}</AlertTitle>
+              </Alert>
+            )}
 
-          <Form onSubmit={handleSumit}>
-            <FormControl mb='20px'>
-              <FormLabel>Store Name</FormLabel>
-              <Text fontSize='xs' color='gray.600'>
-                be as descriptive as possible (must be unique)
-              </Text>
-              <Input type='text' name='store' ref={storeRef} required />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Promotion Title</FormLabel>
-              <Input type='text' name='title' ref={titleRef} required />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Description</FormLabel>
-              <Input
-                type='text'
-                name='description'
-                ref={descriptionRef}
-                isRequired
-              />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Terms And Conditions</FormLabel>
-              <Input
-                type='text'
-                name='termsAndConditions'
-                ref={termsAndConditionsRef}
-                isRequired
-              />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Promocode</FormLabel>
-              <Input
-                type='text'
-                name='promocode'
-                ref={promocodeRef}
-                isRequired
-              />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Init Time</FormLabel>
-              <Input
-                type='datetime-local'
-                name='initTime'
-                ref={initTimeRef}
-                isRequired
-              />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Release Time</FormLabel>
-              <Input
-                type='datetime-local'
-                name='releaseTime'
-                ref={releaseTimeRef}
-                isRequired
-              />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>End Time</FormLabel>
-              <Input
-                type='datetime-local'
-                name='endTime'
-                ref={endTimeRef}
-                isRequired
-              />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Logo Image</FormLabel>
-              <Input type='file' name='logo' ref={logoRef} isRequired />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Poster Image</FormLabel>
-              <Input type='file' name='poster' ref={posterRef} isRequired />
-            </FormControl>
-            <FormControl mb='20px'>
-              <FormLabel>Number Of Coupons</FormLabel>
-              <Input
-                type='number'
-                name='numberOfCoupons'
-                ref={numCouponsRef}
-                isRequired
-              />
-            </FormControl>
+            <Form onSubmit={handleSumit}>
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Store Name</FormLabel>
+                <Text fontSize="xs" color="gray.600">
+                  be as descriptive as possible (must be unique)
+                </Text>
+                <Input type="text" name="store" ref={storeRef} />
+              </FormControl>
 
-            <Button disabled={loading} type='submit' mb='15px' w='100%'>
-              Add Promo
-            </Button>
-          </Form>
-        </CardBody>
-      </Card>
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Promotion Title</FormLabel>
+                <Input type="text" name="title" ref={titleRef} />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>About business</FormLabel>
+                <Textarea
+                  type="text"
+                  name="aboutBusiness"
+                  ref={aboutBusinessRef}
+                />
+              </FormControl>
+
+              <FormControl mb="20px">
+                <FormLabel>Website link</FormLabel>
+                <Input
+                  type="text"
+                  name="businessWebsite"
+                  ref={businessWebsiteRef}
+                />
+              </FormControl>
+
+              <FormControl mb="20px">
+                <FormLabel>Social link</FormLabel>
+                <Input
+                  type="text"
+                  name="businessSocial"
+                  ref={businessSocialRef}
+                />
+              </FormControl>
+
+              <FormControl mb="20px">
+                <FormLabel>Description (how to use promo)</FormLabel>
+                <Textarea type="text" name="description" ref={descriptionRef} />
+              </FormControl>
+
+              <FormControl mb="20px">
+                <FormLabel>Terms And Conditions</FormLabel>
+                <Textarea
+                  type="text"
+                  name="termsAndConditions"
+                  ref={termsAndConditionsRef}
+                />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Promocode</FormLabel>
+                <Input type="text" name="promocode" ref={promocodeRef} />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Init Time</FormLabel>
+                <Input
+                  type="datetime-local"
+                  name="initTime"
+                  ref={initTimeRef}
+                />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Release Time</FormLabel>
+                <Input
+                  type="datetime-local"
+                  name="releaseTime"
+                  ref={releaseTimeRef}
+                />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>End Time</FormLabel>
+                <Input type="datetime-local" name="endTime" ref={endTimeRef} />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Logo Image</FormLabel>
+                <Input type="file" name="logo" ref={logoRef} />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Poster Image</FormLabel>
+                <Input type="file" name="poster" ref={posterRef} />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Number Of Coupons</FormLabel>
+                <Input
+                  type="number"
+                  name="numberOfCoupons"
+                  ref={numCouponsRef}
+                />
+              </FormControl>
+
+              <FormControl mb="20px" isRequired>
+                <FormLabel>Promo Claim Method</FormLabel>
+                <Select placeholder="Select" mb="20px" ref={claimMethodRef}>
+                  <option value="receiptupload">Receipt Upload</option>
+                  <option value="website">Website</option>
+                  <option value="instore">In Store</option>
+                </Select>
+              </FormControl>
+
+              <Button disabled={loading} type="submit" mb="15px" w="100%">
+                Add Promo
+              </Button>
+            </Form>
+          </CardBody>
+        </Card>
+      )}
     </Box>
   );
 };
