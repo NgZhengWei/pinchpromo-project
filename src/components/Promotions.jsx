@@ -240,7 +240,7 @@ const Promotions = () => {
     <Accordion allowToggle background='gray.100'>
       <AccordionItem>
         <AccordionButton>
-          <Box as='span' flex='1' textAlign='left'>
+          <Box id = 'dropDownInfo' as='span' flex='1' textAlign='left'>
             How PinchPromo Works
           </Box>
           <AccordionIcon />
@@ -258,7 +258,7 @@ const Promotions = () => {
           </Text>
 
           <Text mb='15px'>
-            <Link href='/signup' color='blue.400'>
+            <Link id= 'signUpLink' href='/signup' color='blue.400'>
               Sign Up Now
             </Link>{' '}
             to start saving 😊
@@ -266,7 +266,7 @@ const Promotions = () => {
 
           <Text>
             For more info, refer to our{' '}
-            <Link href='/howtouse' color='blue.400'>
+            <Link id = 'moreInfo' href='/howtouse' color='blue.400'>
               how to use
             </Link>{' '}
             page!
@@ -297,6 +297,7 @@ const Promotions = () => {
           </CardBody>
 
           <Button
+            id = 'questionMark'
             onClick={onOpen}
             variant='unstyled'
             position='absolute'

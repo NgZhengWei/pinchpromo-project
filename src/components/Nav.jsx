@@ -252,6 +252,7 @@ const Nav = () => {
       <Flex>
         <Text fontSize={loginAndSignupFontSize} as="h3">
           <Link
+          id = "loginButton"
             to="/login"
             as={NavLink}
             py="6px"
@@ -269,6 +270,7 @@ const Nav = () => {
 
         <Text fontSize={loginAndSignupFontSize} as="h3">
           <Link
+          id = 'signUpButton'
             to="/signup"
             as={NavLink}
             backgroundColor="white"

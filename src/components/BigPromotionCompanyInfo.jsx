@@ -193,6 +193,7 @@ const BigPromotionCompanyInfo = () => {
     <Container>
       <Flex direction='column' w='90%' m='auto'>
         <Image
+          id = 'posterImage'
           boxSize='100%'
           objectFit='cover'
           src={imgURL}
@@ -327,6 +328,7 @@ const BigPromotionCompanyInfo = () => {
         </Text>
 
         <Button
+          id = 'bigPromoClaimButton'
           colorScheme='red'
           mb='20px'
           onClick={claimClickHandler}

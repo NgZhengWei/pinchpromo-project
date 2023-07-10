@@ -38,6 +38,7 @@ const HowToUse = () => {
       </Heading>
       <AspectRatio ratio={16 / 9} mb='15px'>
         <iframe
+          id = 'howToVideo'
           title='How to use PinchPromo'
           src='https://www.youtube.com/embed/W3Q5h756igs'
           allowFullScreen
@@ -83,6 +84,7 @@ const HowToUse = () => {
 
       {!currentUser && (
         <Button
+          id = 'howToSignUpButton'
           onClick={onClickHandlerNewUser}
           colorScheme='red'
           alignSelf='center'
