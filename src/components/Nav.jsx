@@ -143,6 +143,7 @@ const Nav = () => {
 
           <DrawerBody>
             <Link
+              id = 'hamburgerClaimPromosLink'
               onClick={onClose}
               fontFamily="Arial Rounded MT Bold"
               to="/"
@@ -161,6 +162,7 @@ const Nav = () => {
             </Link>
 
             <Link
+              id = 'hamburgerClaimedLink'
               onClick={onClose}
               fontFamily="Arial Rounded MT Bold"
               to="/mypromotions"
@@ -179,6 +181,7 @@ const Nav = () => {
             </Link>
 
             <Link
+              id = 'hamburgerReceiptUpLoadLink'
               onClick={onClose}
               fontFamily="Arial Rounded MT Bold"
               to="/receiptclaim"
@@ -197,6 +200,7 @@ const Nav = () => {
             </Link>
 
             <Link
+              id = 'hamburgerHowToUseLink'
               onClick={onClose}
               fontFamily="Arial Rounded MT Bold"
               to="/howtouse"
@@ -215,6 +219,7 @@ const Nav = () => {
             </Link>
 
             <Link
+              id = 'hamburgerProfileLink'
               onClick={onClose}
               fontFamily="Arial Rounded MT Bold"
               to="/profile"

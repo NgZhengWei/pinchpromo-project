@@ -304,7 +304,7 @@ const Promotions = () => {
             right='5px'
             top='5px'
           >
-            <QuestionIcon boxSize={6} _hover={{ color: 'white' }} />
+            <QuestionIcon id = 'questionMarkButton' boxSize={6} _hover={{ color: 'white' }} />
           </Button>
 
           <Modal isOpen={isOpen} onClose={onClose}>

@@ -126,6 +126,7 @@ const Profile = () => {
             <FormControl mb='20px'>
               <FormLabel>Email</FormLabel>
               <Input
+                id = 'updateEmailInput'
                 type='email'
                 name='email'
                 ref={emailRef}
@@ -136,6 +137,7 @@ const Profile = () => {
             <FormControl mb='20px'>
               <FormLabel>New Password</FormLabel>
               <Input
+              id = 'updatePasswordInput'
                 type='password'
                 name='password'
                 ref={passwordRef}
@@ -145,19 +147,20 @@ const Profile = () => {
             <FormControl mb='20px'>
               <FormLabel>New Confirmed Password</FormLabel>
               <Input
+                id = 'updateConfirmPasswordInput'
                 type='password'
                 name='confirm-password'
                 ref={confirmPasswordRef}
                 placeholder='Leave blank to keep the same'
               />
             </FormControl>
-            <Button disabled={loading} type='submit' w='100%' colorScheme='red'>
+            <Button id = 'updateButton' disabled={loading} type='submit' w='100%' colorScheme='red'>
               Update
             </Button>
           </Form>
         </CardBody>
       </Card>
-      <Button onClick={handleLogout} variant='ghost' colorScheme='gray'>
+      <Button id = 'logoutButton' onClick={handleLogout} variant='ghost' colorScheme='gray'>
         Logout
       </Button>
       {/* <Text>
