@@ -79,11 +79,12 @@ const Login = () => {
           <Form onSubmit={handleSumit}>
             <FormControl mb='20px'>
               <FormLabel>Email</FormLabel>
-              <Input type='email' name='email' ref={emailRef} required />
+              <Input id = 'emailLogin' type='email' name='email' ref={emailRef} required />
             </FormControl>
             <FormControl mb='20px'>
               <FormLabel>Password</FormLabel>
               <Input
+                id = 'passwordLogin'
                 type='password'
                 name='password'
                 ref={passwordRef}
@@ -91,6 +92,7 @@ const Login = () => {
               />
             </FormControl>
             <Button
+              id = 'logginInButton'
               disabled={loading}
               type='submit'
               mb='15px'

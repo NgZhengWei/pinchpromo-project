@@ -1,22 +1,22 @@
 /* eslint-disable no-undef */
-describe('Front End Testing', function() {
+describe('Before Logging in Test', function() {
 
   beforeEach(function() {
     cy.visit('http://localhost:3000')
-    cy.get('#signUpButton')
-    cy.get('#loginButton')
+    cy.get('#signUpNavButton')
+    cy.get('#loginNavButton')
 
   })
 
-  it('front page can be opened', function() {
+  it('Front Page and Footer Information', function() {
     cy.contains('PinchPromo')
     cy.contains('Gomgom')
     cy.contains('Promotions Available')
     cy.contains('Contact Us')
     cy.contains('Telegram: @alestierK')
-    })
+  })
   
-  it('testing "How to?" drop down ', function() {
+  it('"How to?" drop down', function() {
     cy.get('#dropDownInfo').click()
     cy.contains('New exclusive promos are released daily for you to maximise your dollar.')
     cy.get('#signUpLink')
@@ -31,7 +31,7 @@ describe('Front End Testing', function() {
     //cy.go('back')
   })
 
-  it('Testing multiple "Claims", check if link to signup page', function() {
+  it('Test multiple "Claims", check if link to signup page', function() {
     cy.contains('Gomgom').parent().find('button').as('gomGomButton')
     cy.get('@gomGomButton').click()
     cy.url().should('eq', 'http://localhost:3000/signup');
@@ -42,7 +42,8 @@ describe('Front End Testing', function() {
 
 
   })
-  it.only('Testing more information when promotion is clicked', function() {
+
+  it('Testing more information when promotion is clicked', function() {
     cy.get('[alt="Eltelierworks logo"]').click()
     cy.go('back')
     cy.contains('Eltelierworks').click()
@@ -72,7 +73,7 @@ describe('Front End Testing', function() {
   })
 
   //Testing for signing up
-  /*it('Login test', function() {
+  it('Signing Up', function() {
     cy.contains('Sign Up').click()
     cy.get('#name').type('tester')
     cy.get('#email').type('tester@email.com')
@@ -80,7 +81,70 @@ describe('Front End Testing', function() {
     cy.get('#confirmPassword').type('helloworld')
     cy.get('#signUp').click()
     cy.contains('Confirm Your Email')
+    cy.contains('Verify email later',{timeout:10000}).click()
+
+    cy.get('#hamburgerIcon').click()
+    cy.contains('Profile').click()
+    cy.contains('Logout').click()
+
+    cy.contains('Login').click()
+    cy.get('#emailLogin').type('tester@email.com')
+    cy.get('#passwordLogin').type('helloworld')
+    cy.get('#logginInButton').click()
+    
+    //Find side bar, log out, then i have to log out, then test log in.
     
   })
-  */
+  
+ //Test for logging in
+ /*
+ it.only('Login Test', function() {
+  cy.contains('Login').click()
+  cy.get('#emailLogin').type('tester@email.com')
+  cy.get('#passwordLogin').type('helloworld')
+  cy.get('#loginButton').click()
+ })
+ */
 })
+
+// describe('After logging in', function() {
+
+//   beforeEach(function() {
+//     cy.visit('http://localhost:3000')
+//     cy.get('#hamburgerIcon')
+//   })
+
+    // it('Front Page and Footer Information', function() {
+    //   cy.contains('PinchPromo')
+    //   cy.contains('Gomgom')
+    //   cy.contains('Promotions Available')
+    //   cy.contains('Contact Us')
+    //   cy.contains('Telegram: @alestierK')
+    // })
+
+//   it('Question Mark', function() {
+
+//   })
+//   it('Claiming and information', function() {
+
+//   })
+//   it('[HAMBURGER] Update Password', function() {
+
+//   })
+//   it('[HAMBURGER] claimed', function() {
+
+//   })
+//   it('[HAMBURGER] Receipt Upload', function() {
+
+//   })
+//   it('[HAMBURGER] Claim', function() {
+
+//   })
+
+
+// })
+
+
+
+//Test functionalities when logged in. 1: claims, 2: update password. 3: the question mark stuff, check all functionalities in the hamrburger
+// Test if claims available will be deducted or not

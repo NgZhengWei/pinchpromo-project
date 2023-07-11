@@ -120,6 +120,7 @@ const Nav = () => {
         onClick={onOpen}
         ml="10px"
         cursor="pointer"
+        id = 'hamburgerIcon'
       />
 
       <Drawer
@@ -128,6 +129,7 @@ const Nav = () => {
         onClose={onClose}
         finalFocusRef={btnRef}
         size="xs"
+        
       >
         <DrawerOverlay />
         <DrawerContent>
@@ -252,7 +254,7 @@ const Nav = () => {
       <Flex>
         <Text fontSize={loginAndSignupFontSize} as="h3">
           <Link
-          id = "loginButton"
+          id = "loginNavButton"
             to="/login"
             as={NavLink}
             py="6px"
@@ -270,7 +272,7 @@ const Nav = () => {
 
         <Text fontSize={loginAndSignupFontSize} as="h3">
           <Link
-          id = 'signUpButton'
+          id = 'signUpNavButton'
             to="/signup"
             as={NavLink}
             backgroundColor="white"
