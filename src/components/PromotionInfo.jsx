@@ -365,7 +365,7 @@ const PromotionInfo = (props) => {
         </Text>
 
         {!couponInUse && (
-          <Button
+          <Button id = 'claimingButton'
             colorScheme={
               promotionUsed ? 'blackAlpha' : buttonDetails.colorScheme
             }
@@ -438,7 +438,7 @@ const PromotionInfo = (props) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button
+            <Button id = 'confirmUseButton'
               backgroundColor='brandYellow.100'
               _focus={{ backgroundColor: 'brandYellow.200', color: 'white' }}
               mr={3}
@@ -446,7 +446,7 @@ const PromotionInfo = (props) => {
             >
               Confirm Use
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button id = 'cancelButton' onClick={onClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

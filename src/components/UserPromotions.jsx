@@ -141,7 +141,7 @@ const UserPromotions = () => {
 
         {userUsedPromotions.length > 0 && (
           <AccordionItem>
-            <AccordionButton>
+            <AccordionButton id = 'usedPromosButton'>
               <Box as="span" flex="1" textAlign="left">
                 <Heading
                   as="h2"
