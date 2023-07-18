@@ -249,24 +249,9 @@ const Dashboard = () => {
               />
             }
           />
-          {/* <DashboardCard
-            title={"Revenue"}
-            value={revenue}
-            icon={
-              <DollarCircleOutlined
-                style={{
-                  color: "red",
-                  backgroundColor: "rgba(255,0,0,0.25)",
-                  borderRadius: 20,
-                  fontSize: 24,
-                  padding: 8,
-                }}
-              />
-            }
-          /> */}
         </Space>
         <Space>
-          <RecentOrders />
+          {/* <RecentOrders /> */}
           <DashboardChart />
         </Space>
       </Space>
