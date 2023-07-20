@@ -1,247 +1,13 @@
 import {
-  getDoc,
-  doc,
-  updateDoc,
-  arrayRemove,
-  arrayUnion,
-} from 'firebase/firestore';
-import { storage, db } from '../firebase';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  Image,
-  Text,
-} from '@chakra-ui/react';
-import { useAuth } from '../contexts/AuthContext';
-import { useLocation } from 'react-router-dom';
-
-const PromotionInfo = (props) => {
-  const [promotion, setPromotion] = useState({});
-  const [promotionUsed, setPromotionUsed] = useState(false);
-  const [posterURL, setPosterURL] = useState('');
-  const [couponInUse, setCouponInUse] = useState(false);
-  const [timeLeft, setTimeLeft] = useState("Time's Up");
-  const [couponTimeUp, setCouponTimeUp] = useState(false);
-  const { currentUser } = useAuth();
-  const location = useLocation();
-
-  const { promotionId } = location.state;
-
-  useEffect(() => {
-    async function getPromotion() {
-      try {
-        // retrive promotion data using promotionId obtained from navigation from UserPromotion Component
-        // set promotion data to promotion state
-        const promotionPromise = await getDoc(
-          doc(db, 'bigPromotions', promotionId)
-        );
-        setPromotion(promotionPromise.data());
-
-        // retrive user data from FireStore
-        // check if promotionId is in user's active promotions and set promotionUsed state
-        const userPromise = await getDoc(doc(db, 'users', currentUser.uid));
-        const userData = userPromise.data();
-        setPromotionUsed(!userData.promotions.includes(promotionId));
-      } catch (e) {
-        console.error(e.message);
-      }
-    }
-
-    getPromotion();
-  }, []);
-
-  // assignment of variables has to come after useEffect as we to wait for data from FireStore before setting variables
-  const {
-    id,
-    store,
-    title,
-    promocode,
-    description,
-    releaseTime,
-    endTime,
-    pathToLogo,
-    pathToPoster,
-    termsAndCondition,
-    numberOfCoupons,
-    numberOfCouponsClaimed,
-  } = promotion;
-
-  let startDateString;
-  let endDateString;
-  // check if promotion state is set. If it is we
-  // get download url of the logo and poster images from storage
-  // and set date string of start and end date
-  if (Object.keys(promotion).length !== 0) {
-    const posterStorageRef = ref(storage, pathToPoster);
-    getDownloadURL(posterStorageRef).then((url) => {
-      setPosterURL(url);
-    });
-
-    const startDate = new Date(releaseTime);
-    startDateString =
-      String(startDate.getDate()) +
-      ' ' +
-      startDate.toLocaleString('default', { month: 'long' }) +
-      ' ' +
-      String(startDate.getFullYear());
-
-    const endDate = new Date(endTime);
-    endDateString =
-      String(endDate.getDate()) +
-      ' ' +
-      endDate.toLocaleString('default', { month: 'long' }) +
-      ' ' +
-      String(endDate.getFullYear());
-  }
-
-  async function useCouponHandler(e) {
-    if (
-      window.confirm(
-        'Coupon will only be vaild for 5 minutes upon using, please make sure you are at the store before presing "OK". Refreshing the page will make the coupon invalid.'
-      ) === true
-    ) {
-      try {
-        await updateDoc(doc(db, 'users', currentUser.uid), {
-          promotions: arrayRemove(promotionId),
-          usedPromotions: arrayUnion(promotionId),
-        });
-        startUsageTimer();
-      } catch (e) {
-        console.error(e.message);
-      }
-    }
-  }
-
-  function startUsageTimer() {
-    setCouponInUse(true);
-    // change initial timing to when timing duration is changed
-    setTimeLeft('5:00');
-    const currentTime = new Date();
-    // change timing added to change timer duration
-    const endTime = new Date(currentTime.getTime() + 5 * 60000);
-    console.log('end time: ' + endTime);
-
-    const interval = window.setInterval(function () {
-      const now = new Date();
-      const diff = endTime - now;
-
-      if (diff <= 0) {
-        setTimeLeft("Time's Up");
-        clearInterval(interval);
-        setCouponTimeUp(true);
-      } else {
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-        let secondsString = String(seconds);
-        if (secondsString.length === 1) {
-          secondsString = '0' + secondsString;
-        }
-        setTimeLeft(minutes + ':' + secondsString);
-      }
-    }, 1000);
-  }
-
-  return (
-    <Flex direction='column' w='90%' m='auto'>
-      <Image
-        boxSize='100%'
-        objectFit='cover'
-        src={posterURL}
-        mx='auto'
-        mb='5px'
-      />
-      <Heading
-        textAlign='center'
-        fontSize={{ base: '24px', sm: '28px', md: '32px' }}
-        mb='10px'
-      >
-        {store}
-      </Heading>
-      <Heading
-        textAlign='center'
-        fontSize={{ base: '28px', sm: '32px', md: '36px' }}
-        mb='15px'
-      >
-        {title}
-      </Heading>
-      <Flex
-        justifyContent='space-between'
-        borderBottom='1px solid'
-        borderColor='gray.500'
-        mb='15px'
-      >
-        <Box>
-          <Text fontSize={{ base: '13px', sm: '16px' }} color='gray.600'>
-            Release date
-          </Text>
-          <Text fontSize={{ base: '16px', sm: '20px' }}>{startDateString}</Text>
-        </Box>
-        <Box>
-          <Text fontSize={{ base: '13px', sm: '16px' }} color='gray.600'>
-            Expiry date
-          </Text>
-          <Text fontSize={{ base: '16px', sm: '20px' }}>{endDateString}</Text>
-        </Box>
-      </Flex>
-      <Box mb='40px'>
-        <Heading as='h3' fontSize={{ base: '20px', sm: '24px', md: '28px' }}>
-          Description
-        </Heading>
-        <Text fontSize={{ base: '13px', sm: '16px' }} mb='15px'>
-          {description}
-        </Text>
-        <Heading as='h3' fontSize={{ base: '20px', sm: '24px', md: '28px' }}>
-          Terms & Conditions
-        </Heading>
-        <Text fontSize={{ base: '13px', sm: '16px' }}>{termsAndCondition}</Text>
-      </Box>
-
-      {!couponInUse && (
-        <Button
-          colorScheme={promotionUsed ? 'blackAlpha' : 'red'}
-          variant={promotionUsed ? 'outline' : 'solid'}
-          isDisabled={promotionUsed}
-          position='relative'
-          bottom='0px'
-          onClick={useCouponHandler}
-          mb='15px'
-        >
-          {promotionUsed ? 'Used' : 'Use'}
-        </Button>
-      )}
-
-      {couponInUse && (
-        <Card
-          backgroundColor={couponTimeUp ? 'red.500' : 'green.400'}
-          py='10px'
-        >
-          <Text textAlign='center'>{timeLeft}</Text>
-          {couponTimeUp && (
-            <Text textAlign='center'>Thanks for using PinchPromo :)</Text>
-          )}
-          {!couponTimeUp && <Text textAlign='center'>{promocode}</Text>}
-        </Card>
-      )}
-    </Flex>
-  );
-};
-
-export default PromotionInfo;
-import {
   doc,
   updateDoc,
   arrayRemove,
   arrayUnion,
   getDoc,
-} from 'firebase/firestore';
-import { storage, db } from '../firebase';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { useEffect, useState } from 'react';
+} from "firebase/firestore";
+import { storage, db } from "../firebase";
+import { getDownloadURL, ref } from "firebase/storage";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -265,10 +31,10 @@ import {
   ModalBody,
   ModalFooter,
   Link,
-} from '@chakra-ui/react';
-import { useAuth } from '../contexts/AuthContext';
-import { useLocation } from 'react-router-dom';
-import { AtSignIcon, LinkIcon } from '@chakra-ui/icons';
+} from "@chakra-ui/react";
+import { useAuth } from "../contexts/AuthContext";
+import { useLocation } from "react-router-dom";
+import { AtSignIcon, LinkIcon } from "@chakra-ui/icons";
 
 const PromotionInfo = (props) => {
   const location = useLocation();
@@ -276,7 +42,7 @@ const PromotionInfo = (props) => {
   const [promotion, setPromotion] = useState(promotionData);
   const [userData, setUserData] = useState(promotionData);
   const [promotionUsed, setPromotionUsed] = useState(false);
-  const [posterURL, setPosterURL] = useState('');
+  const [posterURL, setPosterURL] = useState("");
   const [couponInUse, setCouponInUse] = useState(false);
   const [timeLeft, setTimeLeft] = useState("Time's Up");
   const [couponTimeUp, setCouponTimeUp] = useState(false);
@@ -304,10 +70,10 @@ const PromotionInfo = (props) => {
   } = promotionData;
 
   useEffect(() => {
-    document.title = 'User Promotion Info';
+    document.title = "User Promotion Info";
 
     async function getUserData() {
-      const userPromise = await getDoc(doc(db, 'users', currentUser.uid));
+      const userPromise = await getDoc(doc(db, "users", currentUser.uid));
       setUserData(userPromise.data());
 
       // check if promotion is in user's used promo
@@ -335,17 +101,17 @@ const PromotionInfo = (props) => {
   const startDate = new Date(releaseTime);
   const startDateString =
     String(startDate.getDate()) +
-    ' ' +
-    startDate.toLocaleString('default', { month: 'long' }) +
-    ' ' +
+    " " +
+    startDate.toLocaleString("default", { month: "long" }) +
+    " " +
     String(startDate.getFullYear());
 
   const endDate = new Date(endTime);
   const endDateString =
     String(endDate.getDate()) +
-    ' ' +
-    endDate.toLocaleString('default', { month: 'long' }) +
-    ' ' +
+    " " +
+    endDate.toLocaleString("default", { month: "long" }) +
+    " " +
     String(endDate.getFullYear());
 
   async function useCouponHandler(e) {
@@ -368,7 +134,7 @@ const PromotionInfo = (props) => {
 
   async function updateDocUseCoupon() {
     try {
-      await updateDoc(doc(db, 'users', currentUser.uid), {
+      await updateDoc(doc(db, "users", currentUser.uid), {
         promotions: arrayRemove(location.state.promotionId),
         usedPromotions: arrayUnion(location.state.promotionId),
       });
@@ -380,11 +146,11 @@ const PromotionInfo = (props) => {
   function startUsageTimer() {
     setCouponInUse(true);
     // change initial timing to when timing duration is changed
-    setTimeLeft('5:00');
+    setTimeLeft("5:00");
     const currentTime = new Date();
     // change timing added to change timer duration
     const endTime = new Date(currentTime.getTime() + 5 * 60000);
-    console.log('end time: ' + endTime);
+    console.log("end time: " + endTime);
 
     const interval = window.setInterval(function () {
       const now = new Date();
@@ -399,98 +165,98 @@ const PromotionInfo = (props) => {
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         let secondsString = String(seconds);
         if (secondsString.length === 1) {
-          secondsString = '0' + secondsString;
+          secondsString = "0" + secondsString;
         }
-        setTimeLeft(minutes + ':' + secondsString);
+        setTimeLeft(minutes + ":" + secondsString);
       }
     }, 1000);
   }
 
-  const accordionHeading = { base: '15px', sm: '16px', md: '20px' };
+  const accordionHeading = { base: "15px", sm: "16px", md: "20px" };
 
   // sets the stylinng for button to allow users to differentiate between claim types easily
   let buttonDetails;
-  if (claimMethod === 'receiptupload') {
+  if (claimMethod === "receiptupload") {
     buttonDetails = {
-      colorScheme: 'telegram',
-      text: 'Upload Receipt After Purchase',
+      colorScheme: "telegram",
+      text: "Upload Receipt After Purchase",
     };
-  } else if (claimMethod === 'website') {
+  } else if (claimMethod === "website") {
     buttonDetails = {
-      colorScheme: 'orange',
-      text: 'Get Promocode For Website Use',
+      colorScheme: "orange",
+      text: "Get Promocode For Website Use",
     };
-  } else if (claimMethod === 'instore') {
+  } else if (claimMethod === "instore") {
     buttonDetails = {
-      colorScheme: 'green',
-      text: 'Use Promocode In Store',
+      colorScheme: "green",
+      text: "Use Promocode In Store",
     };
   } else {
     buttonDetails = {
-      colorScheme: 'red',
-      text: 'Use',
+      colorScheme: "red",
+      text: "Use",
     };
   }
 
   return (
     <Container>
-      <Flex direction='column' w='90%' m='auto'>
+      <Flex direction="column" w="90%" m="auto">
         <Image
-          boxSize='100%'
-          objectFit='cover'
+          boxSize="100%"
+          objectFit="cover"
           src={posterURL}
-          mx='auto'
-          mb='5px'
+          mx="auto"
+          mb="5px"
         />
 
         <Heading
-          textAlign='center'
-          fontSize={{ base: '24px', sm: '28px', md: '32px' }}
-          mb='10px'
-          fontStyle='italic'
-          fontWeight='light'
+          textAlign="center"
+          fontSize={{ base: "24px", sm: "28px", md: "32px" }}
+          mb="10px"
+          fontStyle="italic"
+          fontWeight="light"
         >
           {store}
         </Heading>
 
         <Heading
-          textAlign='center'
-          fontSize={{ base: '28px', sm: '32px', md: '36px' }}
-          mb='15px'
+          textAlign="center"
+          fontSize={{ base: "28px", sm: "32px", md: "36px" }}
+          mb="15px"
         >
           {title}
         </Heading>
         <Flex
-          justifyContent='space-between'
-          borderBottom='1px solid'
-          borderColor='gray.500'
-          mb='15px'
+          justifyContent="space-between"
+          borderBottom="1px solid"
+          borderColor="gray.500"
+          mb="15px"
         >
           <Box>
-            <Text fontSize={{ base: '11px', sm: '13px' }} color='gray.600'>
+            <Text fontSize={{ base: "11px", sm: "13px" }} color="gray.600">
               Release date
             </Text>
-            <Text fontSize={{ base: '15px', sm: '18px' }}>
+            <Text fontSize={{ base: "15px", sm: "18px" }}>
               {startDateString}
             </Text>
           </Box>
           <Box>
-            <Text fontSize={{ base: '11px', sm: '13px' }} color='gray.600'>
+            <Text fontSize={{ base: "11px", sm: "13px" }} color="gray.600">
               Expiry date
             </Text>
-            <Text fontSize={{ base: '15px', sm: '18px' }}>{endDateString}</Text>
+            <Text fontSize={{ base: "15px", sm: "18px" }}>{endDateString}</Text>
           </Box>
         </Flex>
 
-        <Accordion defaultIndex={[0]} allowMultiple mb='10px'>
+        <Accordion defaultIndex={[0]} allowMultiple mb="10px">
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
+                <Box as="span" flex="1" textAlign="left">
                   <Heading
-                    as='h3'
+                    as="h3"
                     fontSize={accordionHeading}
-                    fontWeight='normal'
+                    fontWeight="normal"
                   >
                     [Important] How to use
                   </Heading>
@@ -499,17 +265,17 @@ const PromotionInfo = (props) => {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              <Text fontSize={{ base: '13px', sm: '16px' }} mb='15px'>
+              <Text fontSize={{ base: "13px", sm: "16px" }} mb="15px">
                 {description}
               </Text>
 
-              <Flex alignItems='center' fontSize={{ base: '13px', sm: '16px' }}>
-                <LinkIcon mr='5px' color='blue.400' />
+              <Flex alignItems="center" fontSize={{ base: "13px", sm: "16px" }}>
+                <LinkIcon mr="5px" color="blue.400" />
                 <Link
                   href={businessWebsite}
-                  color='blue.400'
-                  target='_blank'
-                  rel='noreferrer'
+                  color="blue.400"
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   Browse products
                 </Link>
@@ -517,15 +283,15 @@ const PromotionInfo = (props) => {
 
               {businessSocial && businessSocial.length > 0 && (
                 <Flex
-                  alignItems='center'
-                  fontSize={{ base: '13px', sm: '16px' }}
+                  alignItems="center"
+                  fontSize={{ base: "13px", sm: "16px" }}
                 >
-                  <AtSignIcon mr='5px' color='blue.400' />
+                  <AtSignIcon mr="5px" color="blue.400" />
                   <Link
                     href={businessSocial}
-                    color='blue.400'
-                    target='_blank'
-                    rel='noreferrer'
+                    color="blue.400"
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     Social media
                   </Link>
@@ -537,11 +303,11 @@ const PromotionInfo = (props) => {
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
+                <Box as="span" flex="1" textAlign="left">
                   <Heading
-                    as='h3'
+                    as="h3"
                     fontSize={accordionHeading}
-                    fontWeight='normal'
+                    fontWeight="normal"
                   >
                     About Business
                   </Heading>
@@ -550,7 +316,7 @@ const PromotionInfo = (props) => {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              <Text fontSize={{ base: '13px', sm: '16px' }} mb='10px'>
+              <Text fontSize={{ base: "13px", sm: "16px" }} mb="10px">
                 {aboutBusiness}
               </Text>
             </AccordionPanel>
@@ -559,11 +325,11 @@ const PromotionInfo = (props) => {
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
+                <Box as="span" flex="1" textAlign="left">
                   <Heading
-                    as='h3'
+                    as="h3"
                     fontSize={accordionHeading}
-                    fontWeight='normal'
+                    fontWeight="normal"
                   >
                     Terms & Conditions
                   </Heading>
@@ -572,18 +338,18 @@ const PromotionInfo = (props) => {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              <Text fontSize={{ base: '13px', sm: '16px' }} mb='10px'>
+              <Text fontSize={{ base: "13px", sm: "16px" }} mb="10px">
                 {termsAndCondition}
               </Text>
-              <Text fontSize={{ base: '13px', sm: '16px' }}>
+              <Text fontSize={{ base: "13px", sm: "16px" }}>
                 <b>Mandatory Legal Information</b>
               </Text>
-              <Text fontSize={{ base: '13px', sm: '16px' }}>
+              <Text fontSize={{ base: "13px", sm: "16px" }}>
                 PinchPromo may or may not have a formal partnership with the
                 mentioned brands. However, rest assured that the promotions
                 offered through PinchPromo are still valid and genuine.
               </Text>
-              <Text fontSize={{ base: '13px', sm: '16px' }}>
+              <Text fontSize={{ base: "13px", sm: "16px" }}>
                 The logos displayed are used for contextual purposes, providing
                 a visual representation of the brands for which PinchPromo
                 offers promotions. Get ready to enjoy fantastic savings through
@@ -594,61 +360,61 @@ const PromotionInfo = (props) => {
           </AccordionItem>
         </Accordion>
 
-        <Text mb='40px' fontSize={{ base: '11px', sm: '13px' }}>
+        <Text mb="40px" fontSize={{ base: "11px", sm: "13px" }}>
           Note: Legal information in T&C.
         </Text>
 
         {!couponInUse && (
           <Button
             colorScheme={
-              promotionUsed ? 'blackAlpha' : buttonDetails.colorScheme
+              promotionUsed ? "blackAlpha" : buttonDetails.colorScheme
             }
-            variant={promotionUsed ? 'outline' : 'solid'}
+            variant={promotionUsed ? "outline" : "solid"}
             isDisabled={promotionUsed}
-            position='relative'
+            position="relative"
             onClick={useCouponHandler}
-            mb='20px'
-            py='30px'
-            boxShadow='2xl'
+            mb="20px"
+            py="30px"
+            boxShadow="2xl"
           >
-            {promotionUsed ? 'Used' : buttonDetails.text}
+            {promotionUsed ? "Used" : buttonDetails.text}
           </Button>
         )}
 
         {couponInUse && (
           <Card
-            backgroundColor={couponTimeUp ? 'red.500' : 'green.400'}
-            mb='20px'
-            display='flex'
-            justifyContent='top'
-            alignItems='center'
-            variant='outline'
+            backgroundColor={couponTimeUp ? "red.500" : "green.400"}
+            mb="20px"
+            display="flex"
+            justifyContent="top"
+            alignItems="center"
+            variant="outline"
           >
-            <Box w='fit-content' m='20px'>
+            <Box w="fit-content" m="20px">
               <Box>
                 {couponTimeUp ? (
-                  ''
+                  ""
                 ) : (
-                  <Text fontSize={{ base: '12px', sm: '13px' }}>
+                  <Text fontSize={{ base: "12px", sm: "13px" }}>
                     Time remaining:
                   </Text>
                 )}
-                <Text fontSize={{ base: '28px', sm: '30px' }}>
+                <Text fontSize={{ base: "28px", sm: "30px" }}>
                   <b>{timeLeft}</b>
                 </Text>
               </Box>
 
               {couponTimeUp && (
-                <Text fontSize={{ base: '12px', sm: '13px' }}>
+                <Text fontSize={{ base: "12px", sm: "13px" }}>
                   Thanks for using PinchPromo :)
                 </Text>
               )}
               {!couponTimeUp && (
                 <Box>
-                  <Text fontSize={{ base: '12px', sm: '13px' }}>
+                  <Text fontSize={{ base: "12px", sm: "13px" }}>
                     Promocode:
                   </Text>
-                  <Text fontSize={{ base: '28px', sm: '28px' }}>
+                  <Text fontSize={{ base: "28px", sm: "28px" }}>
                     {promocode}
                   </Text>
                 </Box>
@@ -673,8 +439,8 @@ const PromotionInfo = (props) => {
 
           <ModalFooter>
             <Button
-              backgroundColor='brandYellow.100'
-              _focus={{ backgroundColor: 'brandYellow.200', color: 'white' }}
+              backgroundColor="brandYellow.100"
+              _focus={{ backgroundColor: "brandYellow.200", color: "white" }}
               mr={3}
               onClick={activateCouponClickHandler}
             >
