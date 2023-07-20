@@ -148,41 +148,54 @@ describe("After logging in", function () {
     cy.contains("Happy Pinching Promos");
     cy.contains("Close").click();
   });
-  it('Testing more information when promotion is clicked', function() {
-          cy.get('[alt="Eltelierworks logo"]').click()
-          cy.go('back')
-          cy.contains('Eltelierworks').click()
-          cy.contains('Release date')
-          cy.contains('Expiry date')
-          cy.contains('About the business').click()
-          cy.contains('Browse products')
-          cy.contains('Terms & Conditions').click()
-          cy.contains('Mandatory Legal Information')
-          //cy.get('#bigPromoClaimButton').click()
-          //cy.url().should('eq', 'http://localhost:3000/signup')
-          cy.go('back')
-      
-          cy.get('[alt="Gomgom logo"]').click()
-          cy.go('back')
-          cy.contains('Gomgom').click()
-          cy.contains('Release date')
-          cy.contains('Expiry date')
-          cy.contains('About the business').click()
-          cy.contains('Browse products')
-          cy.contains('Terms & Conditions').click()
-          cy.contains('Mandatory Legal Information')
-          cy.go('back')
-          //cy.get('#bigPromoClaimButton').click()
-          //cy.url().should('eq', 'http://localhost:3000/signup')
-      
-    })
+  it("Testing more information when promotion is clicked", function () {
+    cy.get('[alt="Eltelierworks logo"]').click();
+    cy.go("back");
+    cy.contains("Eltelierworks").click();
+    cy.contains("Release date");
+    cy.contains("Expiry date");
+    cy.contains("About the business").click();
+    cy.contains("Browse products");
+    cy.contains("Terms & Conditions").click();
+    cy.contains("Mandatory Legal Information");
+    //cy.get('#bigPromoClaimButton').click()
+    //cy.url().should('eq', 'http://localhost:3000/signup')
+    cy.go("back");
 
-  it('Used Promos are stored', function() {
-    cy.get('#hamburgerIcon').click()
-    cy.get('#hamburgerClaimedLink').click()
-    cy.contains('Used Promos').click()
-    cy.contains('Gomgom')
-  })  
+    cy.get('[alt="Gomgom logo"]').click();
+    cy.go("back");
+    cy.contains("Gomgom").click();
+    cy.contains("Release date");
+    cy.contains("Expiry date");
+    cy.contains("About the business").click();
+    cy.contains("Browse products");
+    cy.contains("Terms & Conditions").click();
+    cy.contains("Mandatory Legal Information");
+    cy.go("back");
+    //cy.get('#bigPromoClaimButton').click()
+    //cy.url().should('eq', 'http://localhost:3000/signup')
+  });
+
+  it("[HAMBURGER] How to Use", function () {
+    cy.get("#hamburgerIcon").click();
+    cy.contains("How to use").click();
+    cy.url().should("eq", "http://localhost:3000/howtouse");
+    cy.contains("Claim New Promos").click();
+  });
+
+  // it('[HAMBURGER]  Receipt Upload', function() {
+
+  // })
+  // it('[HAMBURGER] claimed', function() {
+
+  // })
+
+  it("Used Promos are stored", function () {
+    cy.get("#hamburgerIcon").click();
+    cy.get("#hamburgerClaimedLink").click();
+    cy.contains("Used Promos").click();
+    cy.contains("Gomgom");
+  });
 });
 
 // Test flow: claim from promos page, click on logo, use the claim,check if speech bubble pops up, use claim, check for pinch promo X seomthign
