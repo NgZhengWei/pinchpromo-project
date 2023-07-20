@@ -148,6 +148,34 @@ describe("After logging in", function () {
     cy.contains("Happy Pinching Promos");
     cy.contains("Close").click();
   });
+  it('Testing more information when promotion is clicked', function() {
+          cy.get('[alt="Eltelierworks logo"]').click()
+          cy.go('back')
+          cy.contains('Eltelierworks').click()
+          cy.contains('Release date')
+          cy.contains('Expiry date')
+          cy.contains('About the business').click()
+          cy.contains('Browse products')
+          cy.contains('Terms & Conditions').click()
+          cy.contains('Mandatory Legal Information')
+          //cy.get('#bigPromoClaimButton').click()
+          //cy.url().should('eq', 'http://localhost:3000/signup')
+          cy.go('back')
+      
+          cy.get('[alt="Gomgom logo"]').click()
+          cy.go('back')
+          cy.contains('Gomgom').click()
+          cy.contains('Release date')
+          cy.contains('Expiry date')
+          cy.contains('About the business').click()
+          cy.contains('Browse products')
+          cy.contains('Terms & Conditions').click()
+          cy.contains('Mandatory Legal Information')
+          cy.go('back')
+          //cy.get('#bigPromoClaimButton').click()
+          //cy.url().should('eq', 'http://localhost:3000/signup')
+      
+    })
 });
 
 // Test flow: claim from promos page, click on logo, use the claim,check if speech bubble pops up, use claim, check for pinch promo X seomthign
