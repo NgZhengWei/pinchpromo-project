@@ -23,6 +23,10 @@ import BigPromotionCompanyInfo from "./components/BigPromotionCompanyInfo";
 import Query from "./components/Query";
 import ReceiptClaim from "./components/ReceiptClaim";
 import HowToUse from "./components/HowToUse";
+import Dashboard from "./components/businessDashboard/Dashboard";
+import Customers from "./components/businessDashboard/Customers";
+import Inventory from "./components/businessDashboard/Inventory";
+import Orders from "./components/businessDashboard/Orders";
 
 // router and routes
 const router = createBrowserRouter(
@@ -92,6 +96,42 @@ const router = createBrowserRouter(
         element={
           <PrivateRoute>
             <ReceiptClaim />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/customers"
+        element={
+          <PrivateRoute>
+            <Customers />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/inventory"
+        element={
+          <PrivateRoute>
+            <Inventory />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/orders"
+        element={
+          <PrivateRoute>
+            <Orders />
           </PrivateRoute>
         }
       />
