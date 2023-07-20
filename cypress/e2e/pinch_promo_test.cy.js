@@ -176,6 +176,13 @@ describe("After logging in", function () {
           //cy.url().should('eq', 'http://localhost:3000/signup')
       
     })
+
+  it('Used Promos are stored', function() {
+    cy.get('#hamburgerIcon').click()
+    cy.get('#hamburgerClaimedLink').click()
+    cy.contains('Used Promos').click()
+    cy.contains('Gomgom')
+  })  
 });
 
 // Test flow: claim from promos page, click on logo, use the claim,check if speech bubble pops up, use claim, check for pinch promo X seomthign
