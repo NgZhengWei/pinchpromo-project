@@ -245,13 +245,39 @@ describe("After logging in", function () {
   });
 });
 
-  it("Claiming before claim is reset", function() {
-  cy.contains('0/1')
-  cy.contains('New claim in ')
-  cy.contains('Eltelierworks').parent().find('button').as('eltelierWorksbutton')
-  cy.get('@eltelierWorksbutton').click()
-  cy.contains('Wait till your claim recharges to claim another promotion.')
-})
+it("[HAMBURGER] Claim", function () {
+  cy.contains("Gomgom").parent().find("button").as("gomGomButton");
+  cy.get("@gomGomButton").click();
+  cy.url().should("eq", "http://localhost:3000/mypromotions");
+  cy.go("back");
+  cy.get("#hamburgerIcon").click();
+  cy.get("#hamburgerClaimedLink").click();
+  cy.url().should("eq", "http://localhost:3000/mypromotions");
+  cy.get('[alt="Gomgom logo"]').click();
+  cy.contains("[Important] How to use").click();
+  cy.contains("About Business").click();
+  cy.contains("Terms & Conditions").click();
+  cy.contains("Mandatory Legal Information");
+  cy.get("#claimingButton").click();
+  cy.contains("Note: Before Using Coupon");
+  cy.get("#cancelButton").click();
+  cy.get("#claimingButton").click();
+  cy.get("#confirmUseButton").click();
+  cy.contains("Time remaining:");
+  cy.contains("Promocode:");
+  // cy.contains('Ready to Use Promos')
+});
+
+it("Claiming before claim is reset", function () {
+  cy.contains("0/1");
+  cy.contains("New claim in ");
+  cy.contains("Eltelierworks")
+    .parent()
+    .find("button")
+    .as("eltelierWorksbutton");
+  cy.get("@eltelierWorksbutton").click();
+  cy.contains("Wait till your claim recharges to claim another promotion.");
+});
 
 // Test flow: claim from promos page, click on logo, use the claim,check if speech bubble pops up, use claim, check for pinch promo X seomthign
 //Test functionalities when logged in. 1: claims,  receipt claim
