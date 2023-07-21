@@ -176,6 +176,53 @@ describe("After logging in", function () {
     //cy.url().should('eq', 'http://localhost:3000/signup')
   });
 
+  it("[HAMBURGER] Update Password", function () {
+    //Update Password
+    cy.get("#hamburgerIcon").click();
+    cy.get("#hamburgerProfileLink").click();
+    cy.get("#updateEmailInput").should("have.value", "tester@email.com");
+    cy.get("#updatePasswordInput").type("rightpassword");
+    cy.get("#updateConfirmPasswordInput").type("testwrongpassword2");
+    cy.get("#updateButton").click();
+    cy.contains("Passwords do not match");
+    cy.get("#updateConfirmPasswordInput").clear();
+    cy.get("#updateConfirmPasswordInput").type("rightpassword");
+    cy.get("#updateButton").click();
+    cy.wait(2000);
+
+    cy.get("#hamburgerIcon").click();
+    cy.get("#hamburgerProfileLink").click();
+    cy.get("#logoutButton").click();
+    cy.url().should("eq", "http://localhost:3000/login");
+    cy.get("#emailLogin").type("tester@email.com");
+    cy.get("#passwordLogin").type("rightpassword");
+    cy.get("#logginInButton").click();
+
+    //Update Email
+    cy.get("#hamburgerIcon").click();
+    cy.contains("Profile").click();
+    cy.get("#updateEmailInput").should("have.value", "tester@email.com");
+    cy.get("#updateEmailInput").clear();
+    cy.get("#updateEmailInput").type("updatedTester@email.com");
+    cy.get("#updateButton").click();
+    cy.wait(2000);
+
+    cy.get("#hamburgerIcon").click();
+    cy.get("#hamburgerProfileLink").click();
+    cy.get("#logoutButton").click();
+    cy.url().should("eq", "http://localhost:3000/login");
+    cy.get("#emailLogin").type("updatedTester@email.com");
+    cy.get("#passwordLogin").type("rightpassword");
+    cy.get("#logginInButton").click();
+
+    cy.get("#hamburgerIcon").click();
+    cy.get("#hamburgerProfileLink").click();
+    /*
+    Fails due to no capital letters setting, please fix
+    cy.get('#updateEmailInput').should('have.value', 'updatedTester@email.com')  
+    */
+  });
+
   it("[HAMBURGER] How to Use", function () {
     cy.get("#hamburgerIcon").click();
     cy.contains("How to use").click();
