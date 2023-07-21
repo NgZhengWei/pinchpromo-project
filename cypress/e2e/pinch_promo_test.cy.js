@@ -245,6 +245,14 @@ describe("After logging in", function () {
   });
 });
 
+  it("Claiming before claim is reset", function() {
+  cy.contains('0/1')
+  cy.contains('New claim in ')
+  cy.contains('Eltelierworks').parent().find('button').as('eltelierWorksbutton')
+  cy.get('@eltelierWorksbutton').click()
+  cy.contains('Wait till your claim recharges to claim another promotion.')
+})
+
 // Test flow: claim from promos page, click on logo, use the claim,check if speech bubble pops up, use claim, check for pinch promo X seomthign
 //Test functionalities when logged in. 1: claims,  receipt claim
 // Test if claims available will be deducted or not
