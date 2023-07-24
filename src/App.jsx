@@ -103,36 +103,36 @@ const router = createBrowserRouter(
       <Route
         path="/dashboard"
         element={
-          <PrivateRoute>
+          
             <Dashboard />
-          </PrivateRoute>
+          
         }
       />
 
       <Route
         path="/dashboard/customers"
         element={
-          <PrivateRoute>
+          
             <Customers />
-          </PrivateRoute>
+          
         }
       />
 
       <Route
         path="/dashboard/inventory"
         element={
-          <PrivateRoute>
+          
             <Inventory />
-          </PrivateRoute>
+        
         }
       />
 
       <Route
         path="/dashboard/orders"
         element={
-          <PrivateRoute>
+          
             <Orders />
-          </PrivateRoute>
+          
         }
       />
 
