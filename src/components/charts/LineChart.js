@@ -7,7 +7,11 @@ class LineChart extends React.Component {
 
     this.state = {
       chartData: [],
-      chartOptions: {},
+      chartOptions: {
+        stroke: {
+          curve: 'straight'
+        },
+      },
     };
   }
 
@@ -23,9 +27,10 @@ class LineChart extends React.Component {
       <ReactApexChart
         options={this.state.chartOptions}
         series={this.state.chartData}
-        type='line'
-        width='100%'
-        height='100%'
+        type="line"
+        width="100%"
+        height="100%"
+        curve="straight"
       />
     );
   }
