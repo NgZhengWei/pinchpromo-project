@@ -40,8 +40,6 @@ describe('Before Logging in Test', function() {
     cy.contains('Eltelierworks').parent().find('button').as('eltelierWorksButton')
     cy.get('@eltelierWorksButton').click()
     cy.url().should('eq', 'http://localhost:3000/signup');
-
-
   })
 
   it('Testing more information when promotion is clicked', function() {
@@ -70,7 +68,45 @@ describe('Before Logging in Test', function() {
     cy.contains('Mandatory Legal Information')
     cy.get('#bigPromoClaimButton').click()
     cy.url().should('eq', 'http://localhost:3000/signup')
+  })
 
+  it.only('fuzzer testing for logging in', function() {
+    const iter = 0
+
+    function randomizeUser() {
+      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let user = '';
+      const userLength = Math.floor(Math.random() * 10) + 5; // Random user length between 5 and 14 characters
+      for (let i = 0; i < userLength; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        user += chars.charAt(randomIndex);
+      }
+      return user;
+    }
+    
+    function randomizePassword() {
+      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+      let password = '';
+      const passLength = Math.floor(Math.random() * 15) + 8; // Random password length between 8 and 22 characters
+      for (let i = 0; i < passLength; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        password += chars.charAt(randomIndex);
+      }
+      return password;
+    }
+    
+    cy.contains('Login').click()
+    while (iter <10) {
+      const randomUser = randomizeUser()
+      const randomPass =  randomizePassword()
+      console.log('randomUser: ', randomUser)
+      console.log('randomPass: ', randomPass)
+    
+      cy.get('#emailLogin').type(randomUser)
+      cy.get('#passwordLogin').type(randomPass)
+      cy.get('#logginInButton').click()
+      cy.url().should('eq', 'http://localhost:3000/login')
+    }
   })
 
   //Testing for signing up
@@ -96,6 +132,8 @@ describe('Before Logging in Test', function() {
     //Find side bar, log out, then i have to log out, then test log in.
     
   })
+
+
   
  //Test for logging in
  /*
@@ -238,9 +276,6 @@ describe('After logging in', function() {
     })
 
     // it('[HAMBURGER]  Receipt Upload', function() {
-
-    // })
-    // it('[HAMBURGER] claimed', function() {
 
     // })
     
