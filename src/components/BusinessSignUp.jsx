@@ -14,10 +14,6 @@ import {
   Text,
   useToast,
   Checkbox,
-  RadioGroup,
-  Stack,
-  Radio,
-  HStack,
 } from "@chakra-ui/react";
 import React, { useRef, useState, useEffect } from "react";
 import { Form, NavLink } from "react-router-dom";
@@ -29,7 +25,6 @@ import { CheckIcon } from "@chakra-ui/icons";
 
 const Signup = () => {
   const nameRef = useRef();
-  const [gender, setGender] = useState("male");
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
@@ -42,7 +37,7 @@ const Signup = () => {
   const toast = useToast();
 
   useEffect(() => {
-    document.title = "Signup";
+    document.title = "Business Signup";
   }, []);
 
   async function makeNewUser(user) {
@@ -61,8 +56,8 @@ const Signup = () => {
       nextClaimTime: "",
       timeCreated: currentTime,
       receiveEmailMarketing: receiveEmailRef.current.checked,
-      gender: gender,
-      isBusinessAccount: false,
+      gender: null,
+      isBusinessAccount: true,
     });
   }
 
@@ -91,14 +86,14 @@ const Signup = () => {
       toast({
         title: "Welcome to PinchPromo",
         description:
-          "Here are the available promotions. You get to claim one promo per day so choose wisely and check back daily for exclusive SUTD promos!",
+          "Thanks for joining us. You may create promotions for our users and see their performance!",
         isClosable: true,
         duration: 10000,
         status: "success",
         position: "top",
         icon: <CheckIcon />,
       });
-      navigate("/confirmation");
+      navigate("/dashboard");
     } catch (e) {
       if (e.code === "auth/email-already-in-use") {
         setError("Email already in use.");
@@ -129,7 +124,7 @@ const Signup = () => {
           textAlign="center"
           fontSize="30px"
         >
-          Sign Up
+          Business Sign Up
         </CardHeader>
         <CardBody>
           {error && (
@@ -146,20 +141,9 @@ const Signup = () => {
 
           <Form onSubmit={handleSumit}>
             <FormControl mb="20px">
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Business Name</FormLabel>
               <Input type="text" name="name" ref={nameRef} required />
             </FormControl>
-
-            <RadioGroup mb="20px" onChange={setGender} value={gender} required>
-              Gender:
-              <HStack>
-                <Radio value="male" checked="checked">
-                  Male
-                </Radio>
-                <Radio value="female">Female</Radio>
-                <Radio value="other">Other</Radio>
-              </HStack>
-            </RadioGroup>
 
             <FormControl mb="20px">
               <FormLabel>Email</FormLabel>
@@ -200,7 +184,7 @@ const Signup = () => {
         </CardBody>
       </Card>
       <Text>
-        Already have an account?{" "}
+        Already have a business account?{" "}
         <Link to="/login" color="blue.400" as={NavLink}>
           Login
         </Link>

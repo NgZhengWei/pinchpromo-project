@@ -209,7 +209,7 @@ export const barChartOptionsConsumption = {
 };
 
 export const pieChartOptions = {
-  labels: ["Total", "Claimed"],
+  labels: ["Unclaimed", "Claimed"],
   colors: ["#4318FF", "#6AD2FF"],
   chart: {
     width: "50px",
