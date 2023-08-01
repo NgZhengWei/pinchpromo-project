@@ -40,6 +40,7 @@ import { db } from "../firebase";
 const Nav = () => {
   const { currentUser } = useAuth();
   const [userData, setUserData] = useState({});
+  const [navbarType, setNavbarType] = useState("logged-out");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
   const isDesktop = useBreakpointValue({ base: false, lg: true });
@@ -50,12 +51,18 @@ const Nav = () => {
       const user = userSnapshot.data();
 
       setUserData(user);
+
+      if (user.isBusinessAccount) {
+        setNavbarType("business");
+      } else {
+        setNavbarType("user");
+      }
     }
 
     if (currentUser) {
       getUserData();
     }
-  }, []);
+  }, [currentUser]);
 
   const loginAndSignupFontSize = { base: "14px", sm: "16px", md: "20px" };
 
@@ -363,11 +370,15 @@ const Nav = () => {
     >
       <Image src={Logo} boxSize={{ base: "40px", sm: "60px", md: "80px" }} />
 
-      {currentUser
+      {navbarType === "logged-out" && loggedOutNav}
+      {navbarType === "user" && loggedInNav}
+      {navbarType === "business" && businessNav}
+
+      {/* {currentUser
         ? userData.isBusinessAccount
           ? businessNav
           : loggedInNav
-        : loggedOutNav}
+        : loggedOutNav} */}
     </Flex>
   );
 };
