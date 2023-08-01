@@ -12,17 +12,17 @@ import {
   Input,
   Link,
   Text,
-} from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
-import { Form } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+} from "@chakra-ui/react";
+import React, { useRef, useState } from "react";
+import { Form } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const { login } = useAuth();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -30,15 +30,15 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      setError('');
+      setError("");
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      navigate('/');
+      navigate("/");
     } catch (e) {
-      if (e.code === 'auth/user-not-found') {
-        setError('User not found.');
-      } else if (e.code === 'auth/wrong-password') {
-        setError('Wrong password.');
+      if (e.code === "auth/user-not-found") {
+        setError("User not found.");
+      } else if (e.code === "auth/wrong-password") {
+        setError("Wrong password.");
       } else {
         setError(e.message);
       }
@@ -48,28 +48,28 @@ const Login = () => {
 
   return (
     <Box
-      display='flex'
-      w='90%'
-      mx='auto'
-      maxW='800px'
-      flexDir='column'
-      alignItems='center'
+      display="flex"
+      w="90%"
+      mx="auto"
+      maxW="800px"
+      flexDir="column"
+      alignItems="center"
     >
-      <Card w='100%' mb='20px'>
+      <Card w="100%" mb="20px">
         <CardHeader
-          fontFamily='Arial Rounded MT Bold'
-          textAlign='center'
-          fontSize='30px'
+          fontFamily="Arial Rounded MT Bold"
+          textAlign="center"
+          fontSize="30px"
         >
           Login
         </CardHeader>
         <CardBody>
           {error && (
             <Alert
-              status='error'
-              variant='left-accent'
+              status="error"
+              variant="left-accent"
               borderRadius={4}
-              mb='10px'
+              mb="10px"
             >
               <AlertIcon />
               <AlertTitle>{error}</AlertTitle>
@@ -77,30 +77,30 @@ const Login = () => {
           )}
 
           <Form onSubmit={handleSumit}>
-            <FormControl mb='20px'>
+            <FormControl mb="20px">
               <FormLabel>Email</FormLabel>
-              <Input type='email' name='email' ref={emailRef} required />
+              <Input type="email" name="email" ref={emailRef} required />
             </FormControl>
-            <FormControl mb='20px'>
+            <FormControl mb="20px">
               <FormLabel>Password</FormLabel>
               <Input
-                type='password'
-                name='password'
+                type="password"
+                name="password"
                 ref={passwordRef}
                 isRequired
               />
             </FormControl>
             <Button
               disabled={loading}
-              type='submit'
-              mb='15px'
-              w='100%'
-              colorScheme='red'
+              type="submit"
+              mb="15px"
+              w="100%"
+              colorScheme="red"
             >
               Login
             </Button>
             <Text>
-              <Link href='/forgotpassword' color='blue.400'>
+              <Link href="/forgotpassword" color="blue.400">
                 Forgot password?
               </Link>
             </Text>
@@ -108,9 +108,15 @@ const Login = () => {
         </CardBody>
       </Card>
       <Text>
-        Don't have an account?{' '}
-        <Link href='/signup' color='blue.400'>
+        Don't have an account?{" "}
+        <Link href="/signup" color="blue.400">
           Sign up
+        </Link>
+      </Text>
+      <Text>
+        Managing a business?{" "}
+        <Link href="/businesslogin" color="blue.400">
+          Login as business
         </Link>
       </Text>
     </Box>

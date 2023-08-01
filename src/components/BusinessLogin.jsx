@@ -110,7 +110,13 @@ const Login = () => {
       <Text>
         Don't have a business account?{" "}
         <Link href="/businesssignup" color="blue.400">
-          Sign up as Business
+          Sign up as business
+        </Link>
+      </Text>
+      <Text>
+        Not a business?{" "}
+        <Link href="/login" color="blue.400">
+          Login as user
         </Link>
       </Text>
     </Box>

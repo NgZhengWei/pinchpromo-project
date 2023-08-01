@@ -207,8 +207,8 @@ const Signup = () => {
       </Text>
       <Text>
         Looking to post promotions?{" "}
-        <Link to="/login" color="blue.400" as={NavLink}>
-          Sign Up as Business
+        <Link to="/businesssignup" color="blue.400" as={NavLink}>
+          Sign up as business
         </Link>
       </Text>
     </Box>
