@@ -192,7 +192,7 @@ const Signup = () => {
       <Text>
         Not a business?{" "}
         <Link to="/signup" color="blue.400" as={NavLink}>
-          Sign Up as User
+          Sign up as user
         </Link>
       </Text>
     </Box>
