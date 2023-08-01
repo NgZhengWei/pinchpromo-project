@@ -22,6 +22,8 @@ import ErrorPage from "./components/ErrorPage";
 import BigPromotionCompanyInfo from "./components/BigPromotionCompanyInfo";
 import Query from "./components/Query";
 import ReceiptClaim from "./components/ReceiptClaim";
+import BusinessSignUp from "./components/BusinessSignUp";
+import BusinessLogin from "./components/BusinessLogin";
 import HowToUse from "./components/HowToUse";
 import Dashboard from "./components/businessDashboard/Dashboard";
 import Customers from "./components/businessDashboard/Customers";
@@ -58,7 +60,7 @@ const router = createBrowserRouter(
         }
       />
       <Route
-        path="/newbigpromotionsiaeurngiuenrginaiuenfwef"
+        path="/newbigpromotions"
         element={
           <PrivateRoute>
             <NewBigPromotions />
@@ -100,44 +102,18 @@ const router = createBrowserRouter(
         }
       />
 
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/dashboard" element={<Dashboard />} />
 
-      <Route
-        path="/dashboard/customers"
-        element={
-          <PrivateRoute>
-            <Customers />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/dashboard/customers" element={<Customers />} />
 
-      <Route
-        path="/dashboard/inventory"
-        element={
-          <PrivateRoute>
-            <Inventory />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/dashboard/inventory" element={<Inventory />} />
 
-      <Route
-        path="/dashboard/orders"
-        element={
-          <PrivateRoute>
-            <Orders />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/dashboard/orders" element={<Orders />} />
 
       <Route path="/login" element={<Login />} />
+      <Route path="/businesslogin" element={<BusinessLogin />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/businesssignup" element={<BusinessSignUp />} />
       <Route path="/forgotpassword" element={<ForgotPassword />} />
       <Route path="/howtouse" element={<HowToUse />} />
       <Route path="*" element={<ErrorPage />} />
