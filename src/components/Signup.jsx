@@ -205,6 +205,12 @@ const Signup = () => {
           Login
         </Link>
       </Text>
+      <Text>
+        Looking to post promotions?{" "}
+        <Link to="/login" color="blue.400" as={NavLink}>
+          Sign Up as Business
+        </Link>
+      </Text>
     </Box>
   );
 };
