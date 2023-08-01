@@ -185,8 +185,14 @@ const Signup = () => {
       </Card>
       <Text>
         Already have a business account?{" "}
-        <Link to="/login" color="blue.400" as={NavLink}>
+        <Link to="/businesslogin" color="blue.400" as={NavLink}>
           Login
+        </Link>
+      </Text>
+      <Text>
+        Not a business?{" "}
+        <Link to="/signup" color="blue.400" as={NavLink}>
+          Sign Up as User
         </Link>
       </Text>
     </Box>

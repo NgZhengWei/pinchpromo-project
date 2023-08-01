@@ -52,7 +52,9 @@ const Nav = () => {
       setUserData(user);
     }
 
-    getUserData();
+    if (currentUser) {
+      getUserData();
+    }
   }, []);
 
   const loginAndSignupFontSize = { base: "14px", sm: "16px", md: "20px" };
