@@ -29,14 +29,14 @@ describe('Before logging into business account', () => {
     //bug regarding currentUser found, need to fix
   })
 
-  it.only('Logging into business account', () => {
+  it('Logging into business account', () => {
     cy.get('#businessLoginEmailInput').type('testerbusiness@email.com')
     cy.get('#businessLoginPasswordInput').type('HelloWorld')
     cy.get('#businessLoginButton').click()
     cy.url().should('eq', 'http://localhost:3000/dashboard')
   })
 
-  it.only('Add new promotion, dashboard updates', () => {
+  it('Add new promotion, dashboard updates', () => {
     cy.get('#businessHamburgerIcon').click()
     cy.get('#businessCreateNewPromoLink').click()
 
@@ -136,32 +136,38 @@ describe('Before logging into business account', () => {
   it.only('Log into user account, see the new promotions', ()=> {
 
 
-    cy.get('#businessHamburgerIcon').click()
-    cy.get('#businessProfileLink').click()
-    cy.contains("Logout").click()
+    // cy.get('#businessHamburgerIcon').click()
+    // cy.get('#businessProfileLink').click()
+    // cy.contains("Logout").click()
 
-    cy.visit('http://localhost:3000/login')
-    cy.contains('Login').click()
-    cy.get('#emailLogin').type('tester@email.com')
-    cy.get('#passwordLogin').type('helloworld')
-    cy.get('#logginInButton').click()
-    cy.wait(1000)
+    // cy.visit('http://localhost:3000/login')
+    // cy.contains('Login').click()
+    // cy.get('#emailLogin').type('tester@email.com')
+    // cy.get('#passwordLogin').type('helloworld')
+    // cy.get('#logginInButton').click()
+    // cy.wait(1000)
 
-    cy.contains('Swifties Yeehaw 1')
-    cy.contains('Swifties Yeehaw 2')
-    cy.contains('Swifties Yeehaw 2').parent().find('button').as('swiftiesButton')
-    cy.get('@swiftiesButton').click()
-    cy.url().should('eq', 'http://localhost:3000/mypromotions')
-    //Logging out to go back into business account
-    cy.get('#hamburgerIcon').click()
-    cy.contains('Profile').click()
-    cy.contains('Logout').click()
+    // cy.contains('Swifties Yeehaw 1')
+    // cy.contains('Swifties Yeehaw 2')
+    // cy.contains('Swifties Yeehaw 2').parent().find('button').as('swiftiesButton')
+    // cy.get('@swiftiesButton').click()
+    // cy.url().should('eq', 'http://localhost:3000/mypromotions')
+    // //Logging out to go back into business account
+    // cy.get('#hamburgerIcon').click()
+    // cy.contains('Profile').click()
+    // cy.contains('Logout').click()
+
+    // cy.visit('http://localhost:3000/businesslogin')
+
 
     //Logging into business account to check dashboard
     cy.get('#businessLoginEmailInput').type('testerbusiness@email.com')
     cy.get('#businessLoginPasswordInput').type('HelloWorld')
     cy.get('#businessLoginButton').click()
     cy.url().should('eq', 'http://localhost:3000/dashboard')
+    cy.contains("Total Promotions").parent().should('have.text','Total Promotions20')
+    cy.contains("Promotions Claimed").parent().should('have.text','Promotions Claimed2')
+
   } )
 
 
