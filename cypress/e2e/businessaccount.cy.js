@@ -137,6 +137,42 @@ describe('Before logging into business account', () => {
 
   })
 
+  it('Log into user account, see the new promotions', ()=> {
+
+
+    cy.get('#businessHamburgerIcon').click()
+    cy.get('#businessProfileLink').click()
+    cy.contains("Logout").click()
+
+    cy.visit('http://localhost:3000/login')
+    cy.contains('Login').click()
+    cy.get('#emailLogin').type('tester@email.com')
+    cy.get('#passwordLogin').type('helloworld')
+    cy.get('#logginInButton').click()
+    cy.wait(1000)
+
+    cy.contains('Swifties Yeehaw 1')
+    cy.contains('Swifties Yeehaw 2')
+    cy.contains('Swifties Yeehaw 2').parent().find('button').as('swiftiesButton')
+    cy.get('@swiftiesButton').click()
+    cy.url().should('eq', 'http://localhost:3000/mypromotions')
+    //Logging out to go back into business account
+    cy.get('#hamburgerIcon').click()
+    cy.contains('Profile').click()
+    cy.contains('Logout').click()
+
+    cy.visit('http://localhost:3000/businesslogin')
+
+
+    //Logging into business account to check dashboard
+    cy.get('#businessLoginEmailInput').type('testerbusiness@email.com')
+    cy.get('#businessLoginPasswordInput').type('HelloWorld')
+    cy.get('#businessLoginButton').click()
+    cy.url().should('eq', 'http://localhost:3000/dashboard')
+    cy.contains("Total Promotions").parent().should('have.text','Total Promotions20')
+    cy.contains("Promotions Claimed").parent().should('have.text','Promotions Claimed1')
+  } )
+  
   it('fuzzer testing for big promo', ()=> {
       var iter = 0
   
