@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import getDayDifference from "../util/getDayDifference";
 
 const BigPromotion = (props) => {
   const { currentUser } = useAuth();
@@ -30,11 +31,11 @@ const BigPromotion = (props) => {
   // input: date object as input
   // return: day difference rounded up to nearest int (date1 - date2)
   // if return is -ve means day has passed
-  function getDayDifference(date1, date2) {
-    const diffTime = date1 - date2;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  }
+  // function getDayDifference(date1, date2) {
+  //   const diffTime = date1 - date2;
+  //   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  //   return diffDays;
+  // }
 
   // output: true if coupon is expiring within 3 days, false otherwise
   function isExpiring() {

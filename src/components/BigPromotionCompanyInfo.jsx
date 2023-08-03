@@ -13,20 +13,21 @@ import {
   Link,
   Text,
   useToast,
-} from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { storage, db } from '../firebase';
-import { AtSignIcon, CheckIcon, LinkIcon, WarningIcon } from '@chakra-ui/icons';
-import { useAuth } from '../contexts/AuthContext';
-import { arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage, db } from "../firebase";
+import { AtSignIcon, CheckIcon, LinkIcon, WarningIcon } from "@chakra-ui/icons";
+import { useAuth } from "../contexts/AuthContext";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { getOneUser } from "../util/getData";
 
 const BigPromotionCompanyInfo = () => {
   const { currentUser } = useAuth();
   const location = useLocation();
-  const [imgURL, setImgURL] = useState('');
+  const [imgURL, setImgURL] = useState("");
   const [userData, setUserData] = useState({});
   const [promotionIsClaimed, setPromotionIsClaimed] = useState(false);
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ const BigPromotionCompanyInfo = () => {
         userData.nextClaimTime.length === 0
           ? new Date(currentTime + 60 * 60 * 24 * 1000).toJSON()
           : userData.nextClaimTime;
-      updateDoc(doc(db, 'users', currentUser.uid), {
+      updateDoc(doc(db, "users", currentUser.uid), {
         nextClaimTime: newNextClaimTime,
         claimAvailable: userData.claimAvailable - 1,
       });
@@ -80,13 +81,13 @@ const BigPromotionCompanyInfo = () => {
         // if user is logged in and has claim tickets
         try {
           // add promotion id to list of promotions user has
-          await updateDoc(doc(db, 'users', currentUser.uid), {
+          await updateDoc(doc(db, "users", currentUser.uid), {
             promotions: arrayUnion(id),
           });
 
           const currentTime = new Date().toJSON();
           // increase the number of coupons claimed by 1
-          await updateDoc(doc(db, 'bigPromotions', id), {
+          await updateDoc(doc(db, "bigPromotions", id), {
             numberOfCouponsClaimed: numberOfCouponsClaimed + 1,
             timestampClaim: {
               ...timestampClaim,
@@ -101,54 +102,50 @@ const BigPromotionCompanyInfo = () => {
           // });
           setPromotionIsClaimed(true);
           toast({
-            title: 'Successfully claimed coupon',
+            title: "Successfully claimed coupon",
             description:
-              'Here are your claimed promotions. They will be usable after release so be sure to use them before they expire!',
+              "Here are your claimed promotions. They will be usable after release so be sure to use them before they expire!",
             isClosable: true,
             duration: 10000,
-            status: 'success',
-            position: 'bottom',
+            status: "success",
+            position: "bottom",
             icon: <CheckIcon />,
           });
           // tmp fix here by redirecting user to another page
-          navigate('/mypromotions');
+          navigate("/mypromotions");
         } catch (e) {
           console.error(e);
         }
       } else {
         // if user is logged in and has no claim tickets
         toast({
-          title: 'Oops',
+          title: "Oops",
           description:
-            'Wait till your claim recharges to claim another promotion.',
+            "Wait till your claim recharges to claim another promotion.",
           isClosable: true,
           duration: 5000,
-          status: 'info',
-          position: 'top',
+          status: "info",
+          position: "top",
           icon: <WarningIcon />,
         });
       }
     } else {
       // if user is not logged in
-      navigate('/signup');
+      navigate("/signup");
     }
   }
 
   useEffect(() => {
     async function getUserData() {
       try {
-        const userRef = doc(db, 'users', currentUser.uid);
-        const userDataPromise = await getDoc(userRef);
+        const user = await getOneUser(currentUser.uid);
 
         // checking if user has already claimed this promotion
-        if (
-          userDataPromise.data().promotions.includes(id) ||
-          userDataPromise.data().usedPromotions.includes(id)
-        ) {
+        if (user.promotions.includes(id) || user.usedPromotions.includes(id)) {
           setPromotionIsClaimed(true);
         }
 
-        setUserData(userDataPromise.data());
+        setUserData(user);
       } catch (e) {
         console.error(e);
       }
@@ -173,74 +170,74 @@ const BigPromotionCompanyInfo = () => {
   const startDate = new Date(releaseTime);
   startDateString =
     String(startDate.getDate()) +
-    ' ' +
-    startDate.toLocaleString('default', { month: 'long' }) +
-    ' ' +
+    " " +
+    startDate.toLocaleString("default", { month: "long" }) +
+    " " +
     String(startDate.getFullYear());
 
   const endDate = new Date(endTime);
   endDateString =
     String(endDate.getDate()) +
-    ' ' +
-    endDate.toLocaleString('default', { month: 'long' }) +
-    ' ' +
+    " " +
+    endDate.toLocaleString("default", { month: "long" }) +
+    " " +
     String(endDate.getFullYear());
 
   const remainingCoupons = numberOfCoupons - numberOfCouponsClaimed;
-  const accordionHeading = { base: '15px', sm: '16px', md: '20px' };
+  const accordionHeading = { base: "15px", sm: "16px", md: "20px" };
 
   return (
     <Container>
-      <Flex direction='column' w='90%' m='auto'>
+      <Flex direction="column" w="90%" m="auto">
         <Image
-          boxSize='100%'
-          objectFit='cover'
+          boxSize="100%"
+          objectFit="cover"
           src={imgURL}
-          mx='auto'
-          mb='5px'
+          mx="auto"
+          mb="5px"
         />
 
         <Heading
-          textAlign='center'
-          fontSize={{ base: '32px', sm: '36px', md: '40px' }}
-          mb='10px'
-          fontStyle='italic'
-          fontWeight='light'
+          textAlign="center"
+          fontSize={{ base: "32px", sm: "36px", md: "40px" }}
+          mb="10px"
+          fontStyle="italic"
+          fontWeight="light"
         >
           {store}
         </Heading>
 
         <Flex
-          justifyContent='space-between'
-          borderBottom='1px solid'
-          borderColor='gray.500'
-          mb='15px'
+          justifyContent="space-between"
+          borderBottom="1px solid"
+          borderColor="gray.500"
+          mb="15px"
         >
           <Box>
-            <Text fontSize={{ base: '11px', sm: '13px' }} color='gray.600'>
+            <Text fontSize={{ base: "11px", sm: "13px" }} color="gray.600">
               Release date
             </Text>
-            <Text fontSize={{ base: '15px', sm: '18px' }}>
+            <Text fontSize={{ base: "15px", sm: "18px" }}>
               {startDateString}
             </Text>
           </Box>
           <Box>
-            <Text fontSize={{ base: '11px', sm: '13px' }} color='gray.600'>
+            <Text fontSize={{ base: "11px", sm: "13px" }} color="gray.600">
               Expiry date
             </Text>
-            <Text fontSize={{ base: '15px', sm: '18px' }}>{endDateString}</Text>
+            <Text fontSize={{ base: "15px", sm: "18px" }}>{endDateString}</Text>
           </Box>
         </Flex>
 
-        <Accordion defaultIndex={[0]} allowMultiple mb='10px'>
+        <Accordion defaultIndex={[0]} allowMultiple mb="10px">
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
+                <Box as="span" flex="1" textAlign="left">
                   <Heading
-                    as='h3'
+                    as="h3"
                     fontSize={accordionHeading}
-                    fontWeight='normal'
+                    fontWeight="normal"
                   >
                     About the business
                   </Heading>
@@ -249,20 +246,20 @@ const BigPromotionCompanyInfo = () => {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              <Text fontSize={{ base: '13px', sm: '16px' }} mb='15px'>
+              <Text fontSize={{ base: "13px", sm: "16px" }} mb="15px">
                 {aboutBusiness}
               </Text>
               <Flex
-                alignItems='center'
-                fontSize={{ base: '13px', sm: '16px' }}
-                mb='5px'
+                alignItems="center"
+                fontSize={{ base: "13px", sm: "16px" }}
+                mb="5px"
               >
-                <LinkIcon mr='5px' color='blue.400' />
+                <LinkIcon mr="5px" color="blue.400" />
                 <Link
                   href={businessWebsite}
-                  color='blue.400'
-                  target='_blank'
-                  rel='noreferrer'
+                  color="blue.400"
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   Browse products
                 </Link>
@@ -270,15 +267,15 @@ const BigPromotionCompanyInfo = () => {
 
               {businessSocial !== undefined && businessSocial.length > 0 && (
                 <Flex
-                  alignItems='center'
-                  fontSize={{ base: '13px', sm: '16px' }}
+                  alignItems="center"
+                  fontSize={{ base: "13px", sm: "16px" }}
                 >
-                  <AtSignIcon mr='5px' color='blue.400' />
+                  <AtSignIcon mr="5px" color="blue.400" />
                   <Link
                     href={businessSocial}
-                    color='blue.400'
-                    target='_blank'
-                    rel='noreferrer'
+                    color="blue.400"
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     Social media
                   </Link>
@@ -290,11 +287,11 @@ const BigPromotionCompanyInfo = () => {
           <AccordionItem>
             <h2>
               <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
+                <Box as="span" flex="1" textAlign="left">
                   <Heading
-                    as='h3'
+                    as="h3"
                     fontSize={accordionHeading}
-                    fontWeight='normal'
+                    fontWeight="normal"
                   >
                     Terms & Conditions
                   </Heading>
@@ -303,15 +300,15 @@ const BigPromotionCompanyInfo = () => {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              <Text fontSize={{ base: '13px', sm: '16px' }}>
+              <Text fontSize={{ base: "13px", sm: "16px" }}>
                 <b>Mandatory Legal Information</b>
               </Text>
-              <Text fontSize={{ base: '13px', sm: '16px' }}>
+              <Text fontSize={{ base: "13px", sm: "16px" }}>
                 PinchPromo may or may not have a formal partnership with the
                 mentioned brands. However, rest assured that the promotions
                 offered through PinchPromo are still valid and genuine.
               </Text>
-              <Text fontSize={{ base: '13px', sm: '16px' }}>
+              <Text fontSize={{ base: "13px", sm: "16px" }}>
                 The logos displayed are used for contextual purposes, providing
                 a visual representation of the brands for which PinchPromo
                 offers promotions. Get ready to enjoy fantastic savings through
@@ -322,29 +319,29 @@ const BigPromotionCompanyInfo = () => {
           </AccordionItem>
         </Accordion>
 
-        <Text mb='40px' fontSize={{ base: '11px', sm: '13px' }}>
+        <Text mb="40px" fontSize={{ base: "11px", sm: "13px" }}>
           Note: Important legal information in T&C.
         </Text>
 
         <Button
-          colorScheme='red'
-          mb='20px'
+          colorScheme="red"
+          mb="20px"
           onClick={claimClickHandler}
           isDisabled={remainingCoupons <= 0 || promotionIsClaimed}
           _disabled={{
-            backgroundColor: 'gray.400',
-            opacity: '0.4',
-            cursor: 'not-allowed',
+            backgroundColor: "gray.400",
+            opacity: "0.4",
+            cursor: "not-allowed",
           }}
           _hover={{
-            opacity: '0.7',
+            opacity: "0.7",
           }}
         >
           {promotionIsClaimed
-            ? 'Claimed'
+            ? "Claimed"
             : remainingCoupons <= 0
-            ? 'Fully Claimed'
-            : 'Claim'}
+            ? "Fully Claimed"
+            : "Claim"}
         </Button>
       </Flex>
     </Container>

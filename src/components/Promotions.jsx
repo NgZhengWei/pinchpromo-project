@@ -1,13 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { db } from '../firebase';
-import {
-  getDocs,
-  collection,
-  doc,
-  getDoc,
-  updateDoc,
-} from 'firebase/firestore';
+import { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { db } from "../firebase";
+import { getDocs, collection, doc, updateDoc } from "firebase/firestore";
 import {
   Card,
   CardBody,
@@ -31,33 +25,26 @@ import {
   Box,
   AccordionIcon,
   AccordionPanel,
-} from '@chakra-ui/react';
-import BigPromotion from './BigPromotion';
-import { QuestionIcon } from '@chakra-ui/icons';
+} from "@chakra-ui/react";
+import BigPromotion from "./BigPromotion";
+import { QuestionIcon } from "@chakra-ui/icons";
+import getDayDifference from "../util/getDayDifference";
+import { getOneUser } from "../util/getData";
 
 const Promotions = () => {
   const { currentUser } = useAuth();
   const [userData, setUserData] = useState({});
   const [bigPromotions, setBigPromotions] = useState([]);
   // const [timeToNextClaim, setTimeToNextClaim] = useState('');
-  const [claimRemainingMessage, setClaimRemainingMessage] = useState('');
+  const [claimRemainingMessage, setClaimRemainingMessage] = useState("");
   const [runningInterval, setRunningInterval] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const bigPromotionsCollectionRef = collection(db, 'bigPromotions');
+  const bigPromotionsCollectionRef = collection(db, "bigPromotions");
 
   let userRef;
   if (currentUser) {
-    userRef = doc(db, 'users', currentUser.uid);
-  }
-
-  // input: date object as input
-  // return: day difference rounded up to nearest int (date1 - date2)
-  // if return is -ve means day has passed
-  function getDayDifference(date1, date2) {
-    const diffTime = date1 - date2;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+    userRef = doc(db, "users", currentUser.uid);
   }
 
   // input: release time obtained from promotions object
@@ -70,7 +57,7 @@ const Promotions = () => {
   }
 
   useEffect(() => {
-    document.title = 'Promotions';
+    document.title = "Promotions";
 
     const getBigPromotions = async () => {
       try {
@@ -79,15 +66,15 @@ const Promotions = () => {
 
         if (currentUser) {
           try {
-            const userData = await getDoc(userRef);
-            setUserData(userData.data());
+            const user = await getOneUser(currentUser.uid);
+            setUserData(user);
 
             filteredData = data.docs.map((doc) => ({
               ...doc.data(),
               id: doc.id,
-              promotions: userData.data().promotions,
-              usedPromotions: userData.data().usedPromotions,
-              claimAvailable: userData.data().claimAvailable,
+              promotions: user.promotions,
+              usedPromotions: user.usedPromotions,
+              claimAvailable: user.claimAvailable,
             }));
           } catch (e) {
             console.error(e);
@@ -129,7 +116,7 @@ const Promotions = () => {
 
     if (Object.keys(userData).length === 0) {
       // data has not yet loaded
-      setClaimRemainingMessage('');
+      setClaimRemainingMessage("");
     } else if (userData.claimAvailable === userData.claimCapacity) {
       // user has all claims possible, not recharging claims
       setClaimRemainingMessage(
@@ -147,14 +134,14 @@ const Promotions = () => {
         } else {
           const hours = String(
             Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-          ).padStart(2, '0');
+          ).padStart(2, "0");
           const minutes = String(
             Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-          ).padStart(2, '0');
+          ).padStart(2, "0");
           const seconds = String(Math.floor((diff % (1000 * 60)) / 1000));
-          let secondsString = String(seconds).padStart(2, '0');
+          let secondsString = String(seconds).padStart(2, "0");
 
-          const timeToNextClaim = hours + ':' + minutes + ':' + secondsString;
+          const timeToNextClaim = hours + ":" + minutes + ":" + secondsString;
           setClaimRemainingMessage(`New claim in ${timeToNextClaim}.`);
         }
       }, 1000);
@@ -174,18 +161,18 @@ const Promotions = () => {
     try {
       if (userData.claimAvailable + 1 >= userData.claimCapacity) {
         // if user has reached their claim capacity, increment claim by 1 and set next claim time to empty so they are not regenerating the next claim
-        updateDoc(doc(db, 'users', currentUser.uid), {
-          nextClaimTime: '',
+        updateDoc(doc(db, "users", currentUser.uid), {
+          nextClaimTime: "",
           claimAvailable: userData.claimAvailable + 1,
         });
         setUserData((prevState) => ({
           ...prevState,
-          nextClaimTime: '',
+          nextClaimTime: "",
           claimAvailable: userData.claimAvailable + 1,
         }));
       } else {
         // user has not reached claim capacity, increment claim and start regenerating the next claim
-        updateDoc(doc(db, 'users', currentUser.uid), {
+        updateDoc(doc(db, "users", currentUser.uid), {
           nextClaimTime: tomorrow.toJSON(),
           claimAvailable: userData.claimAvailable + 1,
         });
@@ -214,7 +201,7 @@ const Promotions = () => {
         userData.nextClaimTime.length === 0
           ? tomorrow.toJSON()
           : userData.nextClaimTime;
-      updateDoc(doc(db, 'users', currentUser.uid), {
+      updateDoc(doc(db, "users", currentUser.uid), {
         nextClaimTime: newNextClaimTime,
         claimAvailable: userData.claimAvailable - 1,
       });
@@ -237,38 +224,38 @@ const Promotions = () => {
   }
 
   const newUserInfoAccordion = (
-    <Accordion allowToggle background='gray.100'>
+    <Accordion allowToggle background="gray.100">
       <AccordionItem>
         <AccordionButton>
-          <Box as='span' flex='1' textAlign='left'>
+          <Box as="span" flex="1" textAlign="left">
             How PinchPromo Works
           </Box>
           <AccordionIcon />
         </AccordionButton>
         <AccordionPanel>
-          <Text mb='15px'>
+          <Text mb="15px">
             New exclusive promos are <b>released daily</b> for you to maximise
             your dollar.
           </Text>
 
-          <Text mb='15px'>
+          <Text mb="15px">
             Each promo will only be <b>claimable for 7 days</b> in "Claim
             Promos" tab before disappearing. You get 1 claim per day which
             resets at 12am, so choose wisely.
           </Text>
 
-          <Text mb='15px'>
-            <Link href='/signup' color='blue.400'>
+          <Text mb="15px">
+            <Link href="/signup" color="blue.400">
               Sign Up Now
-            </Link>{' '}
+            </Link>{" "}
             to start saving 😊
           </Text>
 
           <Text>
-            For more info, refer to our{' '}
-            <Link href='/howtouse' color='blue.400'>
+            For more info, refer to our{" "}
+            <Link href="/howtouse" color="blue.400">
               how to use
-            </Link>{' '}
+            </Link>{" "}
             page!
           </Text>
         </AccordionPanel>
@@ -277,56 +264,56 @@ const Promotions = () => {
   );
 
   return (
-    <Container pb='20px'>
+    <Container pb="20px">
       {!currentUser && newUserInfoAccordion}
       {currentUser && (
         <Card
-          textAlign='center'
-          py='15px'
-          variant='outline'
-          position='relative'
+          textAlign="center"
+          py="15px"
+          variant="outline"
+          position="relative"
         >
           <Text>Claims available</Text>
-          <CardHeader p='0px'>
-            <Heading as='h3'>
+          <CardHeader p="0px">
+            <Heading as="h3">
               {userData.claimAvailable}/{userData.claimCapacity}
             </Heading>
           </CardHeader>
-          <CardBody px='0px' py='0px'>
+          <CardBody px="0px" py="0px">
             <Text>{claimRemainingMessage}</Text>
           </CardBody>
 
           <Button
             onClick={onOpen}
-            variant='unstyled'
-            position='absolute'
-            right='5px'
-            top='5px'
+            variant="unstyled"
+            position="absolute"
+            right="5px"
+            top="5px"
           >
-            <QuestionIcon boxSize={6} _hover={{ color: 'white' }} />
+            <QuestionIcon boxSize={6} _hover={{ color: "white" }} />
           </Button>
 
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader mt='20px'>
-                <Heading textAlign='center'> How does PinchPromo work?</Heading>
+              <ModalHeader mt="20px">
+                <Heading textAlign="center"> How does PinchPromo work?</Heading>
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <Text mb='15px'>
+                <Text mb="15px">
                   New exclusive promos are <b>released daily</b> for you to
                   maximise your dollar.
                 </Text>
 
-                <Text mb='15px'>
+                <Text mb="15px">
                   Each promo will only be <b>claimable for 7 days</b> in "Claim
                   Promos" tab before disappearing. You get 1 claim per day which
                   resets at 12am, so choose wisely!
                 </Text>
 
-                <Text mb='15px'>
-                  Your claimed promos are found in the "Claimed" tab and can be{' '}
+                <Text mb="15px">
+                  Your claimed promos are found in the "Claimed" tab and can be{" "}
                   <b>used once the details are released</b>. So be sure to check
                   back daily to secure the best promotions.
                 </Text>
@@ -336,10 +323,10 @@ const Promotions = () => {
 
               <ModalFooter>
                 <Button
-                  backgroundColor='brandYellow.100'
+                  backgroundColor="brandYellow.100"
                   mr={3}
                   onClick={onClose}
-                  _focus={{ backgroundColor: 'brandYellow.200' }}
+                  _focus={{ backgroundColor: "brandYellow.200" }}
                 >
                   Close
                 </Button>
@@ -350,7 +337,7 @@ const Promotions = () => {
       )}
 
       {bigPromotions.length > 0 && (
-        <Heading textAlign='center' mt='25px'>
+        <Heading textAlign="center" mt="25px">
           Promotions Available
         </Heading>
       )}
@@ -358,12 +345,12 @@ const Promotions = () => {
         bigPromotions.map((promotion) => {
           // if current time has not exceeded init time, dont show it
           if (new Date() - new Date(promotion.initTime) < 0) {
-            return '';
+            return "";
           } else if (
             getDayDifference(new Date(), new Date(promotion.initTime)) > 7
           ) {
             // if a week has passed since the promotion has been released, dont display it.
-            return '';
+            return "";
           }
 
           return (
@@ -377,7 +364,7 @@ const Promotions = () => {
         })}
 
       {bigPromotions.length === 0 && (
-        <Heading textAlign='center' mt='15px'>
+        <Heading textAlign="center" mt="15px">
           Refresh the page to view promos!
         </Heading>
       )}
