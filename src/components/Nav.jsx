@@ -3,21 +3,16 @@ import {
   Heading,
   Image,
   Link,
-  List,
-  ListItem,
   Spacer,
   Text,
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  Button,
   useDisclosure,
   useBreakpointValue,
-  Box,
   HStack,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
@@ -34,8 +29,7 @@ import {
   StarIcon,
   ViewIcon,
 } from "@chakra-ui/icons";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { getOneUser } from "../util/getData";
 
 const Nav = () => {
   const { currentUser } = useAuth();
@@ -47,8 +41,7 @@ const Nav = () => {
 
   useEffect(() => {
     async function getUserData() {
-      const userSnapshot = await getDoc(doc(db, "users", currentUser.uid));
-      const user = userSnapshot.data();
+      const user = await getOneUser(currentUser.uid);
 
       setUserData(user);
 

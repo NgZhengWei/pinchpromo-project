@@ -1,10 +1,4 @@
-import {
-  doc,
-  updateDoc,
-  arrayRemove,
-  arrayUnion,
-  getDoc,
-} from "firebase/firestore";
+import { doc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { storage, db } from "../firebase";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
@@ -35,6 +29,7 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useLocation } from "react-router-dom";
 import { AtSignIcon, LinkIcon } from "@chakra-ui/icons";
+import { getOneUser } from "../util/getData";
 
 const PromotionInfo = (props) => {
   const location = useLocation();
@@ -72,20 +67,23 @@ const PromotionInfo = (props) => {
   useEffect(() => {
     document.title = "User Promotion Info";
 
+    console.log("ran");
+
     async function getUserData() {
-      const userPromise = await getDoc(doc(db, "users", currentUser.uid));
-      setUserData(userPromise.data());
+      const user = await getOneUser(currentUser.uid);
+      setUserData(user);
 
       // check if promotion is in user's used promo
       // makes sure that the usage is always in sync with db (otherwise refreshing will allow user to use it again)
-      if (
-        userPromise.data().usedPromotions.includes(location.state.promotionId)
-      ) {
+      if (user.usedPromotions.includes(location.state.promotionId)) {
         setPromotionUsed(true);
       }
     }
 
-    getUserData();
+    // only get user's data after currentuser state is loaded in
+    if (currentUser) {
+      getUserData();
+    }
   }, []);
 
   useEffect(() => {
