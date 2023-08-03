@@ -36,10 +36,6 @@ describe('Before logging into business account', () => {
     cy.url().should('eq', 'http://localhost:3000/dashboard')
   })
 
-<<<<<<< HEAD
-=======
-
->>>>>>> ff78c791dd0f325d98d8297865b5ae4edbfeb9a9
   it('Add new promotion, dashboard updates', () => {
     cy.get('#businessHamburgerIcon').click()
     cy.get('#businessCreateNewPromoLink').click()
@@ -175,13 +171,8 @@ describe('Before logging into business account', () => {
     cy.contains("Total Promotions").parent().should('have.text','Total Promotions20')
     cy.contains("Promotions Claimed").parent().should('have.text','Promotions Claimed1')
   } )
-<<<<<<< HEAD
 
-  it.only('fuzzer testing for big promo', ()=> {
-=======
-  
   it('fuzzer testing for big promo', ()=> {
->>>>>>> ff78c791dd0f325d98d8297865b5ae4edbfeb9a9
       var iter = 0
   
       function randomize() {
