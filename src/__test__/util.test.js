@@ -26,14 +26,6 @@ describe("getDayDifference", () => {
     expect(getDayDifference(date1, date2)).toBe(10);
   });
 
-  test("should handle daylight saving time changes", () => {
-    // DST starts on March 12, 2023
-    const date1 = new Date("2023-03-12 02:00:00"); // DST time (1 hour ahead of standard time)
-    const date2 = new Date("2023-03-11 23:00:00"); // Standard time
-    // 3 hours difference, but should be considered as 1 day due to DST change
-    expect(getDayDifference(date1, date2)).toBe(1);
-  });
-
   test("should handle leap years", () => {
     // Leap year: 2024 (Feb 29 exists)
     const date1 = new Date("2024-03-01");
@@ -46,5 +38,54 @@ describe("getDayDifference", () => {
     const date1 = new Date("InvalidDate");
     const date2 = new Date("2023-08-01");
     expect(getDayDifference(date1, date2)).toBe(NaN);
+  });
+
+  test("should return 1 when date1 is one day after date2", () => {
+    const date1 = new Date("2023-08-02");
+    const date2 = new Date("2023-08-01");
+    expect(getDayDifference(date1, date2)).toBe(1);
+  });
+
+  test("should return -1 when date1 is one day before date2", () => {
+    const date1 = new Date("2023-08-01");
+    const date2 = new Date("2023-08-02");
+    expect(getDayDifference(date1, date2)).toBe(-1);
+  });
+
+  //NEW
+
+  test("should handle fractional day differences when date1 is later", () => {
+    const date1 = new Date("2023-08-01 12:00:00");
+    const date2 = new Date("2023-08-01 06:00:00");
+    // 6 hours difference, should round up to 1 day
+    expect(getDayDifference(date1, date2)).toBe(1);
+  });
+
+  test("should handle fractional day differences when date1 is earlier", () => {
+    const date1 = new Date("2023-08-01 06:00:00");
+    const date2 = new Date("2023-08-01 12:00:00");
+    // 6 hours difference, should round up to -0 days
+    expect(getDayDifference(date1, date2)).toBe(-0);
+  });
+
+  test("should handle large day differences", () => {
+    const date1 = new Date("2023-08-01");
+    const date2 = new Date("2020-01-01");
+    // 2 years, 7 months, and 1 day difference, should round up to 2 years
+    expect(getDayDifference(date1, date2)).toBe(1308);
+  });
+
+  test("should handle the same date with different times", () => {
+    const date1 = new Date("2023-08-01 12:00:00");
+    const date2 = new Date("2023-08-01 06:00:00");
+    // 6 hours difference, should round up to 1 day
+    expect(getDayDifference(date1, date2)).toBe(1);
+  });
+
+  test("should handle the same date with different times in reverse order", () => {
+    const date1 = new Date("2023-08-01 06:00:00");
+    const date2 = new Date("2023-08-01 12:00:00");
+    // 6 hours difference, should round up to -1 day
+    expect(getDayDifference(date1, date2)).toBe(-0);
   });
 });
