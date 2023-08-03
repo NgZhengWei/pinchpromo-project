@@ -70,44 +70,6 @@ describe('Before Logging in Test', function() {
     cy.url().should('eq', 'http://localhost:3000/signup')
   })
 
-  it.only('fuzzer testing for logging in', function() {
-    const iter = 0
-
-    function randomizeUser() {
-      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let user = '';
-      const userLength = Math.floor(Math.random() * 10) + 5; // Random user length between 5 and 14 characters
-      for (let i = 0; i < userLength; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        user += chars.charAt(randomIndex);
-      }
-      return user;
-    }
-    
-    function randomizePassword() {
-      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-      let password = '';
-      const passLength = Math.floor(Math.random() * 15) + 8; // Random password length between 8 and 22 characters
-      for (let i = 0; i < passLength; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        password += chars.charAt(randomIndex);
-      }
-      return password;
-    }
-    
-    cy.contains('Login').click()
-    while (iter <10) {
-      const randomUser = randomizeUser()
-      const randomPass =  randomizePassword()
-      console.log('randomUser: ', randomUser)
-      console.log('randomPass: ', randomPass)
-    
-      cy.get('#emailLogin').type(randomUser)
-      cy.get('#passwordLogin').type(randomPass)
-      cy.get('#logginInButton').click()
-      cy.url().should('eq', 'http://localhost:3000/login')
-    }
-  })
 
   //Testing for signing up
   it('Signing Up', function() {
