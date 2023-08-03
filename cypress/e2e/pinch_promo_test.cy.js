@@ -7,7 +7,6 @@ describe("Before Logging in Test", function () {
     cy.get("#loginNavButton");
   });
 
-<<<<<<< Updated upstream
   it("Front Page and Footer Information", function () {
     cy.contains("PinchPromo");
     cy.contains("Gomgom");
@@ -15,12 +14,6 @@ describe("Before Logging in Test", function () {
     cy.contains("Contact Us");
     cy.contains("Telegram: @alestierK");
   });
-=======
-  beforeEach(function() {
-    cy.visit('localhost:3000/')
-    cy.get('#signUpNavButton')
-    cy.get('#loginNavButton')
->>>>>>> Stashed changes
 
   it('"How to?" drop down', function () {
     cy.get("#dropDownInfo").click();
@@ -78,14 +71,8 @@ describe("Before Logging in Test", function () {
     cy.url().should('eq', 'http://localhost:3000/signup')
   })
 
-<<<<<<< Updated upstream
   it.only('fuzzer testing for logging in', function() {
     var iter = 0
-=======
-  it('fuzzer testing for logging in', function() {
-      let iter = 0
-      const maxIter = 10
->>>>>>> Stashed changes
 
     function randomizeUser() {
       const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -110,9 +97,9 @@ describe("Before Logging in Test", function () {
     }
     
     cy.contains('Login').click()
-    while (iter < maxIter ) {
-      var randomUser = randomizeUser()
-      var randomPass =  randomizePassword()
+    while (iter <10) {
+      const randomUser = randomizeUser()
+      const randomPass =  randomizePassword()
       console.log('randomUser: ', randomUser)
       console.log('randomPass: ', randomPass)
     
@@ -120,15 +107,8 @@ describe("Before Logging in Test", function () {
       cy.get('#passwordLogin').type(randomPass)
       cy.get('#logginInButton').click()
       cy.url().should('eq', 'http://localhost:3000/login')
-<<<<<<< Updated upstream
-=======
-      cy.get('#emailLogin').clear()
-      cy.get('#passwordLogin').clear()
->>>>>>> Stashed changes
       iter +=1
     }
-    cy.url().should('eq', 'http://localhost:3000/login')
-
   })
 
 
@@ -154,55 +134,6 @@ describe("Before Logging in Test", function () {
 
     //Find side bar, log out, then i have to log out, then test log in.
     
-  })
-
-  it.only('fuzzer testing for signing up', function() {
-
-    var iter = 0
-    const maxIter = 5
-
-    function randomizeUser() {
-      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let user = '';
-      const userLength = Math.floor(Math.random() * 10) + 5; // Random user length between 5 and 14 characters
-      for (let i = 0; i < userLength; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        user += chars.charAt(randomIndex);
-      }
-      return user;
-    }
-    
-    function randomizePassword() {
-      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-      let password = '';
-      const passLength = Math.floor(Math.random() * 15) + 8; // Random password length between 8 and 22 characters
-      for (let i = 0; i < passLength; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        password += chars.charAt(randomIndex);
-      }
-      return password;
-    }
-
-    cy.get('#signUpNavButton').click()
-
-    while( iter < maxIter) {
-      var randomName = randomizeUser()
-      var randomPassword1 = randomizePassword()
-      var randomPassword2 = randomizePassword()
-
-      cy.get('#name').type(randomName)
-      cy.get('#email').type('staticmail@email.com')
-      cy.get('#password').type(randomPassword1)
-      cy.get('#confirmPassword').type(randomPassword2)
-      cy.get('#signUp').click()
-      cy.contains('Passwords do not match')
-      cy.wait(1000)
-      cy.get('#name').clear()
-      cy.get('#email').clear()
-      cy.get('#password').clear()
-      cy.get('#confirmPassword').clear()
-      iter +=1
-    }
   })
 
 
