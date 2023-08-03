@@ -66,6 +66,7 @@ const Signup = () => {
   }
 
   async function handleSumit(e) {
+    console.log("going through")
     e.preventDefault();
 
     if (passwordRef.current.value !== confirmPasswordRef.current.value) {
