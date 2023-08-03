@@ -34,9 +34,145 @@ describe('Before logging into business account', () => {
     cy.get('#businessLoginPasswordInput').type('HelloWorld')
     cy.get('#businessLoginButton').click()
     cy.url().should('eq', 'http://localhost:3000/dashboard')
-  })  
+  })
 
-  it('fuzzer testing for big promo', ()=> {
+  it('Add new promotion, dashboard updates', () => {
+    cy.get('#businessHamburgerIcon').click()
+    cy.get('#businessCreateNewPromoLink').click()
+
+    //Adding first Big Promo------------------------------------------------------------------------
+    cy.get('#bigPromoStoreNameInput').type('Swifties Yeehaw 1')
+
+    cy.get('#bigPromoPromoTitleInput').type('50% off Taylor Swift Tickets! 1')
+
+    cy.get('#bigPromoAboutBusinessInput').type('We give out good deals for Taylor Swift')
+
+    cy.get('#bigPromoAboutWebsiteLinkInput').type('www.taylortaylor.com')
+
+    cy.get('#bigPromoSocialLinkInput').type('www.taylortaylor.com/socialmedia')
+
+    cy.get('#bigPromoDescriptionInput').type('When you claim this and show Taylor Swift, she will give you 50% off!')
+
+    cy.get('#bigPromoTermsAndConditionsInput').type('You must be a true swifty fan')
+
+    cy.get('#bigPromoCodeInput').type('ILOVETAYLOR50')
+
+    cy.get('#bigPromoInitTimeInput').type('2023-08-02T13:00')
+    cy.get('#bigPromoReleaseTimeInput').type('2023-08-02T13:00')
+    cy.get('#bigPromoEndTimeInput').type('2023-12-05T17:30')
+
+    cy.get('#bigLogoImageInput').selectFile('BusinessPromoCypress.png')
+    cy.get('#bigPromoPosterimageInput').selectFile('BusinessPosterCypress.png')
+
+    cy.get('#bigPromoNumCouponsInput').type('10')
+
+    cy.get('#bigPromoSelectClaim').select('Website')
+
+    cy.get('#bigPromoAddPromoButton').click()
+
+    cy.wait(2000)
+    cy.contains('Successfully added big promotion.')
+
+    //Clearing the previous inputs
+    cy.get('#bigPromoStoreNameInput').clear()
+
+    cy.get('#bigPromoPromoTitleInput').clear()
+
+    cy.get('#bigPromoAboutBusinessInput').clear()
+
+    cy.get('#bigPromoAboutWebsiteLinkInput').clear()
+
+    cy.get('#bigPromoSocialLinkInput').clear()
+
+    cy.get('#bigPromoDescriptionInput').clear()
+
+    cy.get('#bigPromoTermsAndConditionsInput').clear()
+
+    cy.get('#bigPromoCodeInput').clear()
+
+    cy.get('#bigPromoInitTimeInput').clear()
+    cy.get('#bigPromoReleaseTimeInput').clear()
+    cy.get('#bigPromoEndTimeInput').clear()
+
+    cy.get('#bigPromoNumCouponsInput').clear()
+
+
+
+    //Adding second Big Promo------------------------------------------------------------------------
+    cy.get('#businessHamburgerIcon').click()
+    cy.get('#businessCreateNewPromoLink').click()
+
+  
+    cy.get('#bigPromoStoreNameInput').type('Swifties Yeehaw 2')
+
+    cy.get('#bigPromoPromoTitleInput').type('50% off Taylor Swift Tickets! 2')
+
+    cy.get('#bigPromoAboutBusinessInput').type('We give out good deals for Taylor Swift')
+
+    cy.get('#bigPromoAboutWebsiteLinkInput').type('www.taylortaylor.com')
+
+    cy.get('#bigPromoSocialLinkInput').type('www.taylortaylor.com/socialmedia')
+
+    cy.get('#bigPromoDescriptionInput').type('When you claim this and show Taylor Swift, she will give you 50% off!')
+
+    cy.get('#bigPromoTermsAndConditionsInput').type('You must be a true swifty fan')
+
+    cy.get('#bigPromoCodeInput').type('ILOVETAYLOR50')
+
+    cy.get('#bigPromoInitTimeInput').type('2023-08-02T13:00')
+
+    cy.get('#bigPromoReleaseTimeInput').type('2023-08-02T13:00')
+
+    cy.get('#bigPromoEndTimeInput').type('2023-12-05T17:30')
+    cy.get('#bigLogoImageInput').selectFile('BusinessPromoCypress2.png')
+    cy.get('#bigPromoPosterimageInput').selectFile('BusinessPosterCypress2.png')
+    cy.get('#bigPromoNumCouponsInput').type('10')
+    cy.get('#bigPromoSelectClaim').select('Website')
+    cy.get('#bigPromoAddPromoButton').click()
+    cy.wait(2000)
+    cy.contains('Successfully added big promotion.')
+
+    cy.visit('http://localhost:3000/dashboard')
+
+  })
+
+  it('Log into user account, see the new promotions', ()=> {
+
+
+    cy.get('#businessHamburgerIcon').click()
+    cy.get('#businessProfileLink').click()
+    cy.contains("Logout").click()
+
+    cy.visit('http://localhost:3000/login')
+    cy.contains('Login').click()
+    cy.get('#emailLogin').type('tester@email.com')
+    cy.get('#passwordLogin').type('helloworld')
+    cy.get('#logginInButton').click()
+    cy.wait(1000)
+
+    cy.contains('Swifties Yeehaw 1')
+    cy.contains('Swifties Yeehaw 2')
+    cy.contains('Swifties Yeehaw 2').parent().find('button').as('swiftiesButton')
+    cy.get('@swiftiesButton').click()
+    cy.url().should('eq', 'http://localhost:3000/mypromotions')
+    //Logging out to go back into business account
+    cy.get('#hamburgerIcon').click()
+    cy.contains('Profile').click()
+    cy.contains('Logout').click()
+
+    cy.visit('http://localhost:3000/businesslogin')
+
+
+    //Logging into business account to check dashboard
+    cy.get('#businessLoginEmailInput').type('testerbusiness@email.com')
+    cy.get('#businessLoginPasswordInput').type('HelloWorld')
+    cy.get('#businessLoginButton').click()
+    cy.url().should('eq', 'http://localhost:3000/dashboard')
+    cy.contains("Total Promotions").parent().should('have.text','Total Promotions20')
+    cy.contains("Promotions Claimed").parent().should('have.text','Promotions Claimed1')
+  } )
+
+  it.only('fuzzer testing for big promo', ()=> {
       var iter = 0
   
       function randomize() {
