@@ -72,7 +72,7 @@ describe("Before Logging in Test", function () {
   })
 
   it.only('fuzzer testing for logging in', function() {
-    const iter = 0
+    var iter = 0
 
     function randomizeUser() {
       const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -107,6 +107,7 @@ describe("Before Logging in Test", function () {
       cy.get('#passwordLogin').type(randomPass)
       cy.get('#logginInButton').click()
       cy.url().should('eq', 'http://localhost:3000/login')
+      iter +=1
     }
   })
 
@@ -450,6 +451,6 @@ it("Claiming before claim is reset", function () {
   cy.contains("Wait till your claim recharges to claim another promotion.");
 });
 
+})
 // Test flow: claim from promos page, click on logo, use the claim,check if speech bubble pops up, use claim, check for pinch promo X seomthign
 //Test functionalities when logged in. 1: claims,  receipt claim
-// Test if claims available will be deducted or not
