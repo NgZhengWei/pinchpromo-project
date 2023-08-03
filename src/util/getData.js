@@ -7,8 +7,8 @@ async function getOneUser(uid) {
     const user = userSnapshot.data();
     return user;
   } catch (e) {
-    console.error(e);
-    return `Error getting user with uid ${uid}`;
+    //console.error(e);
+    throw new Error(`Error getting user with uid ${uid}`);
   }
 }
 
