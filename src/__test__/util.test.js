@@ -52,8 +52,6 @@ describe("getDayDifference", () => {
     expect(getDayDifference(date1, date2)).toBe(-1);
   });
 
-  //NEW
-
   test("should handle fractional day differences when date1 is later", () => {
     const date1 = new Date("2023-08-01 12:00:00");
     const date2 = new Date("2023-08-01 06:00:00");
