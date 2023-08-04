@@ -1,5 +1,4 @@
 import { getOneUser } from "../util/getData";
-import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 jest.mock("../firebase", () => ({
