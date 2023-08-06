@@ -32,12 +32,43 @@ describe("getOneUser", () => {
     receiveEmailMarketing: true,
   };
 
-  it("returns the user data when a valid uid is given", async () => {
+  it("returns the user's name when a valid uid is given", async () => {
     getDoc.mockResolvedValueOnce({ data: () => docData });
     const uid = "valid-uid";
     const userData = await getOneUser(uid);
     expect(userData.name).toEqual("PinchPromo");
-    // Add more assertions as needed
+  });
+
+  it("returns the user's email when a valid uid is given", async () => {
+    getDoc.mockResolvedValueOnce({ data: () => docData });
+    const uid = "valid-uid";
+    const userData = await getOneUser(uid);
+    expect(userData.email).toEqual("user@gmail.com");
+  });
+
+  it("returns the user's promotions when a valid uid is given", async () => {
+    getDoc.mockResolvedValueOnce({ data: () => docData });
+    const uid = "valid-uid";
+    const userData = await getOneUser(uid);
+    expect(userData.promotions).toEqual([
+      "Eltelierworks-2023-06-26T14:55-687c9e10-aee2-44dd-9859-7c95810b478f",
+      "Gomgom-2023-06-23T14:52-a61e667d-3404-4c52-a140-2e0b3b824770",
+      "PinchPromo-2023-08-02T19:30-1690889459741",
+    ]);
+  });
+
+  it("returns the user's account type when a valid uid is given", async () => {
+    getDoc.mockResolvedValueOnce({ data: () => docData });
+    const uid = "valid-uid";
+    const userData = await getOneUser(uid);
+    expect(userData.isBusinessAccount).toEqual(true);
+  });
+
+  it("returns the user's email marketing status when a valid uid is given", async () => {
+    getDoc.mockResolvedValueOnce({ data: () => docData });
+    const uid = "valid-uid";
+    const userData = await getOneUser(uid);
+    expect(userData.receiveEmailMarketing).toEqual(true);
   });
 
   it("throws an error when an invalid uid is given", async () => {
