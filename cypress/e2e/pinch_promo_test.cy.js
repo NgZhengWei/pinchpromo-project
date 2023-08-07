@@ -70,7 +70,7 @@ describe('Before Logging in Test', function() {
     cy.url().should('eq', 'http://localhost:3000/signup')
   })
 
-  it.only('fuzzer testing for logging in', function() {
+  it.only('Fuzzer testing for logging in', function() {
     var iter = 0
 
     function randomizeUser() {
@@ -115,7 +115,7 @@ describe('Before Logging in Test', function() {
     }
   })
 
-  it.only('fuzzer testing for signing up', function() {
+  it.only('Fuzzer testing for signing up', function() {
 
     var iter = 0
     const maxIter = 5
@@ -239,6 +239,67 @@ describe('After logging in', function() {
     
     })
 
+    it.only('Fuzzer Receipt Test', function() {
+      var  iter = 0
+
+      cy.get('#hamburgerIcon').click()
+      cy.get('#hamburgerReceiptUpLoadLink').click()
+
+      function randomizeNum() {
+        const chars = '0123456789';
+        let rand = '';
+        const randLength = Math.floor(Math.random() * 10) + 5; // Random user length between 5 and 14 characters
+        for (let i = 0; i < randLength; i++) {
+          const randomIndex = Math.floor(Math.random() * chars.length);
+          rand += chars.charAt(randomIndex);
+        }
+        return rand;
+      }
+
+      function omitRandomInput() {
+        const inputFields = [
+          'PictureUpload',
+          'NumberUpload',
+          'PromoClaimSelect'
+          // Add other input field IDs here as needed
+        ];
+        const randomIndex = Math.floor(Math.random() * 3);
+        const inputToOmit = inputFields[randomIndex];
+        return inputToOmit
+      }
+
+      while (iter <10) {
+        const omittedInput = omitRandomInput();
+
+        if (omittedInput === 'PictureUpload'){
+          cy.get('#ReceiptClaimPhoneNumInput').type(randomizeNum())
+          cy.get('#ReceiptClaimFormSelectInput').select('SUTD Professors')
+          cy.get('#ReceiptClaimButtonInput').click()
+
+        }
+        else if(omittedInput === 'NumberUpload'){
+          cy.get('#ReceiptClaimReceiptImageInput').selectFile('UserAccountReceiptClaimImage.png')
+          cy.get('#ReceiptClaimFormSelectInput').select('SUTD Professors')
+          cy.get('#ReceiptClaimButtonInput').click()
+
+        }
+        else if(omittedInput === 'PromoClaimSelect'){
+          cy.get('#ReceiptClaimReceiptImageInput').selectFile('UserAccountReceiptClaimImage.png')
+          cy.get('#ReceiptClaimPhoneNumInput').type(randomizeNum())
+          cy.get('#ReceiptClaimFormSelectInput').select('Select')
+          cy.get('#ReceiptClaimButtonInput').click()
+
+        }
+        cy.contains('Successfully added receipt claim.').should('not.exist');
+
+        cy.go('back')
+        cy.go('forward')
+
+        iter +=1
+      }
+
+    })
+
     it('Question Mark', function() {
       cy.get('#questionMark').click()
       cy.contains('How does PinchPromo work?')
@@ -277,8 +338,6 @@ describe('After logging in', function() {
 
     it('[HAMBURGER] Update Password', function() {
       //Update Password
-      cy.get('#hamburgerIcon').click()
-      cy.get('#hamburgerProfileLink').click()
       cy.get('#updateEmailInput').should('have.value', 'tester@email.com')
       cy.get('#updatePasswordInput').type('rightpassword')
       cy.get('#updateConfirmPasswordInput').type('testwrongpassword2')
@@ -330,9 +389,18 @@ describe('After logging in', function() {
       cy.contains('Claim New Promos').click()
     })
 
-    // it('[HAMBURGER]  Receipt Upload', function() {
+    it('[HAMBURGER] Receipt Upload', function() {
+      
+      cy.get('#hamburgerIcon').click()
+      cy.get('#hamburgerReceiptUpLoadLink').click()
+      cy.get('#ReceiptClaimPhoneNumInput').type('12345678')
+      cy.get('#ReceiptClaimFormSelectInput').select('SUTD Professors')
+      cy.get('#ReceiptClaimReceiptImageInput').selectFile('UserAccountReceiptClaimImage.png')
 
-    // })
+      cy.get('#ReceiptClaimButtonInput').click()
+      cy.contains('Successfully added receipt claim.').should('exist');
+
+    })
     
     it('[HAMBURGER] Claim', function() {
       cy.contains('Gomgom').parent().find('button').as('gomGomButton')

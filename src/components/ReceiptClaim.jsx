@@ -152,7 +152,7 @@ import {
         <Form onSubmit={handleSumit}>
           <FormControl mb='20px' isRequired>
             <FormLabel>Promotion To Claim For</FormLabel>
-            <Select placeholder='Select' ref={promotionRef}>
+            <Select id ='ReceiptClaimFormSelectInput' placeholder='Select' ref={promotionRef}>
               {userPromotions.map((p) => {
                 return (
                   <option value={p.id} key={p.id}>
@@ -165,15 +165,15 @@ import {
   
           <FormControl mb='20px' isRequired>
             <FormLabel>Paynow/PayLah Number</FormLabel>
-            <Input type='number' name='phoneNumber' ref={phoneNumberRef} />
+            <Input id ='ReceiptClaimPhoneNumInput' type='number' name='phoneNumber' ref={phoneNumberRef} />
           </FormControl>
   
           <FormControl mb='20px' isRequired>
             <FormLabel>Receipt Image</FormLabel>
-            <Input type='file' name='receipt' ref={receiptRef} />
+            <Input id ='ReceiptClaimReceiptImageInput' type='file' name='receipt' ref={receiptRef} />
           </FormControl>
   
-          <Button disabled={loading} type='submit' w='100%' colorScheme='red'>
+          <Button id ='ReceiptClaimButtonInput'disabled={loading} type='submit' w='100%' colorScheme='red'>
             Submit Claim
           </Button>
         </Form>
