@@ -77,6 +77,7 @@ const Nav = () => {
       <Spacer />
 
       <HamburgerIcon
+      id = 'hamburgerIcon'
         boxSize={{ base: 6, sm: 7, md: 8 }}
         ref={btnRef}
         onClick={onOpen}
@@ -215,6 +216,7 @@ const Nav = () => {
       <Spacer />
 
       <HamburgerIcon
+        id = 'businessHamburgerIcon'
         boxSize={{ base: 6, sm: 7, md: 8 }}
         ref={btnRef}
         onClick={onOpen}
@@ -259,6 +261,7 @@ const Nav = () => {
             </Link>
 
             <Link
+              id = 'businessCreateNewPromoLink'
               onClick={onClose}
               fontFamily="Arial Rounded MT Bold"
               to="/newbigpromotions"
@@ -277,6 +280,7 @@ const Nav = () => {
             </Link>
 
             <Link
+              id = 'businessProfileLink'
               onClick={onClose}
               fontFamily="Arial Rounded MT Bold"
               to="/profile"

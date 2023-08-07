@@ -79,11 +79,12 @@ const Login = () => {
           <Form onSubmit={handleSumit}>
             <FormControl mb="20px">
               <FormLabel>Email</FormLabel>
-              <Input type="email" name="email" ref={emailRef} required />
+              <Input id = 'businessLoginEmailInput' type="email" name="email" ref={emailRef} required />
             </FormControl>
             <FormControl mb="20px">
               <FormLabel>Password</FormLabel>
               <Input
+                id = 'businessLoginPasswordInput'
                 type="password"
                 name="password"
                 ref={passwordRef}
@@ -91,6 +92,7 @@ const Login = () => {
               />
             </FormControl>
             <Button
+            id = 'businessLoginButton'
               disabled={loading}
               type="submit"
               mb="15px"
@@ -109,14 +111,8 @@ const Login = () => {
       </Card>
       <Text>
         Don't have a business account?{" "}
-        <Link href="/businesssignup" color="blue.400">
-          Sign up as business
-        </Link>
-      </Text>
-      <Text>
-        Not a business?{" "}
-        <Link href="/login" color="blue.400">
-          Login as user
+        <Link id ='businessLoginSignUpLink' href="/businesssignup" color="blue.400">
+          Sign up
         </Link>
       </Text>
     </Box>
