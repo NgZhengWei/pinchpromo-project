@@ -172,7 +172,7 @@ describe('Before logging into business account', () => {
     cy.contains("Promotions Claimed").parent().should('have.text','Promotions Claimed1')
   } )
 
-  it('fuzzer testing for big promo', ()=> {
+  it('Fuzzer testing for big promo', ()=> {
       var iter = 0
   
       function randomize() {
