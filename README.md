@@ -1,6 +1,9 @@
 # **50.003 Elements of Software Construction**
 
-# **Group Report of C2SI2 **
+## Features (Demo video)
+https://github.com/user-attachments/assets/6dc12920-6aff-41bf-9d52-4af1d6bdf5c4
+
+# Group Report of C2SI2
 
 <table>
   <tr>
