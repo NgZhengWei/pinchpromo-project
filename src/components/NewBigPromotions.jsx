@@ -175,17 +175,18 @@ const NewBigPromotions = () => {
               <Text fontSize="xs" color="gray.600">
                 be as descriptive as possible (must be unique)
               </Text>
-              <Input type="text" name="store" ref={storeRef} />
+              <Input id = 'bigPromoStoreNameInput' type="text" name="store" ref={storeRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Promotion Title</FormLabel>
-              <Input type="text" name="title" ref={titleRef} />
+              <Input id = 'bigPromoPromoTitleInput'type="text" name="title" ref={titleRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>About business</FormLabel>
               <Textarea
+                id = 'bigPromoAboutBusinessInput'
                 type="text"
                 name="aboutBusiness"
                 ref={aboutBusinessRef}
@@ -195,6 +196,7 @@ const NewBigPromotions = () => {
             <FormControl mb="20px">
               <FormLabel>Website link</FormLabel>
               <Input
+                id = 'bigPromoAboutWebsiteLinkInput'
                 type="text"
                 name="businessWebsite"
                 ref={businessWebsiteRef}
@@ -204,6 +206,7 @@ const NewBigPromotions = () => {
             <FormControl mb="20px">
               <FormLabel>Social link</FormLabel>
               <Input
+                id = 'bigPromoSocialLinkInput'
                 type="text"
                 name="businessSocial"
                 ref={businessSocialRef}
@@ -212,12 +215,13 @@ const NewBigPromotions = () => {
 
             <FormControl mb="20px">
               <FormLabel>Description (how to use promo)</FormLabel>
-              <Textarea type="text" name="description" ref={descriptionRef} />
+              <Textarea id = 'bigPromoDescriptionInput' type="text" name="description" ref={descriptionRef} />
             </FormControl>
 
             <FormControl mb="20px">
               <FormLabel>Terms And Conditions</FormLabel>
               <Textarea
+                id = 'bigPromoTermsAndConditionsInput'
                 type="text"
                 name="termsAndConditions"
                 ref={termsAndConditionsRef}
@@ -226,17 +230,21 @@ const NewBigPromotions = () => {
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Promocode</FormLabel>
-              <Input type="text" name="promocode" ref={promocodeRef} />
+              <Input
+               id = 'bigPromoCodeInput'
+               type="text" name="promocode" ref={promocodeRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Init Time</FormLabel>
-              <Input type="datetime-local" name="initTime" ref={initTimeRef} />
+              <Input id = 'bigPromoInitTimeInput'
+              type="datetime-local" name="initTime" ref={initTimeRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Release Time</FormLabel>
               <Input
+                id = 'bigPromoReleaseTimeInput'
                 type="datetime-local"
                 name="releaseTime"
                 ref={releaseTimeRef}
@@ -245,34 +253,39 @@ const NewBigPromotions = () => {
 
             <FormControl mb="20px" isRequired>
               <FormLabel>End Time</FormLabel>
-              <Input type="datetime-local" name="endTime" ref={endTimeRef} />
+              <Input 
+                id = 'bigPromoEndTimeInput'
+                type="datetime-local" name="endTime" ref={endTimeRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Logo Image</FormLabel>
-              <Input type="file" name="logo" ref={logoRef} />
+              <Input id = 'bigLogoImageInput'
+               type="file" name="logo" ref={logoRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Poster Image</FormLabel>
-              <Input type="file" name="poster" ref={posterRef} />
+              <Input 
+              id = 'bigPromoPosterimageInput'
+              type="file" name="poster" ref={posterRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Number Of Coupons</FormLabel>
-              <Input type="number" name="numberOfCoupons" ref={numCouponsRef} />
+              <Input id = 'bigPromoNumCouponsInput' type="number" name="numberOfCoupons" ref={numCouponsRef} />
             </FormControl>
 
             <FormControl mb="20px" isRequired>
               <FormLabel>Promo Claim Method</FormLabel>
-              <Select placeholder="Select" mb="20px" ref={claimMethodRef}>
+              <Select id = 'bigPromoSelectClaim' placeholder="Select" mb="20px" ref={claimMethodRef}>
                 <option value="receiptupload">Receipt Upload</option>
                 <option value="website">Website</option>
                 <option value="instore">In Store</option>
               </Select>
             </FormControl>
 
-            <Button disabled={loading} type="submit" mb="15px" w="100%">
+            <Button id = 'bigPromoAddPromoButton' disabled={loading} type="submit" mb="15px" w="100%">
               Add Promo
             </Button>
           </Form>
